@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bridgr — Academia–Industry Skill Mapping & Internships</title>
+<meta name="description" content="AI-powered academia–industry skill mapping and internship portal. Compare your skills with what employers want, close the gap and land the internship." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%231d1d1f'/><path d='M14 40c8-14 28-14 36 0' stroke='%2300d9ff' stroke-width='6' fill='none' stroke-linecap='round'/><circle cx='14' cy='42' r='5' fill='%23fff'/><circle cx='50' cy='42' r='5' fill='%23fff'/></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/assets/styles.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+</head>
+<body>
+  <div class="ribbon"><a href="#/">Bridgr Home</a><span>|</span><a href="#/insights">For Institutions</a><span>|</span><a href="#/recruiter">For Recruiters</a></div>
+  <nav class="gnav" id="gnav">
+    <div class="gnav-inner">
+      <a class="logo" href="#/" aria-label="Bridgr home"><svg viewBox="0 0 64 64" width="20" height="20"><path d="M10 42c9-16 35-16 44 0" stroke="currentColor" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="10" cy="44" r="6" fill="currentColor"/><circle cx="54" cy="44" r="6" fill="currentColor"/></svg><b>Bridgr</b></a>
+      <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+      <div class="gnav-links" id="gnavLinks">
+        <a href="#/profile">Profile</a><a href="#/gap">Skill Gap</a><a href="#/roadmap">Roadmap</a><a href="#/internships">Internships</a><a href="#/tracker">Tracker</a><a href="#/ats">ATS Score</a><a href="#/interview">Interview</a><a href="#/resume">Resume</a><a href="#/curriculum">Curriculum</a><a href="#/insights">Insights</a><a href="#/mentor">Mentor</a>
+      </div>
+      <button class="icon-btn" id="themeBtn" title="Toggle dark mode" aria-label="Toggle dark mode">◐</button>
+    </div>
+  </nav>
+  <main id="app" tabindex="-1"></main>
+  <footer class="foot">
+    <div class="wrap">
+      <p><b>Bridgr</b> — AI-Powered Academia–Industry Skill Mapping and Internship Portal · SCSE4041 Mini Project</p>
+      <p class="muted">Model: <span id="modelBadge">checking…</span> · Internship listings are sample data for demonstration. · <a href="#" id="dlRuns">Download run log (JSON)</a> · <a href="#" id="resetAll">Reset demo data</a></p>
+    </div>
+  </footer>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="/assets/data.js"></script>
+  <script src="/assets/engine.js"></script>
+  <script src="/assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "bridgr",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bridgr — AI-Powered Academia–Industry Skill Mapping and Internship Portal",
+  "scripts": {
+    "test": "node scripts/run-tests.mjs",
+    "export-prompts": "node scripts/export-prompts.mjs"
+  },
+  "engines": { "node": ">=20" }
+}

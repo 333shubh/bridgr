@@ -20,7 +20,7 @@
     const cur = document.documentElement.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     const nt = cur === "dark" ? "light" : "dark"; applyTheme(nt); store.set("theme", nt);
   };
-  $("#menuBtn").onclick = () => $("#gnavLinks").classList.toggle("open");
+  $("#menuBtn").onclick = () => { const o = $("#gnavLinks").classList.toggle("open"); $("#menuBtn").setAttribute("aria-expanded", String(o)); };
 
   // ---------- AI client ----------
   let MODE = "checking";
@@ -56,56 +56,126 @@
   const chips = (arr, cls = "") => `<div class="chips">${(arr || []).map(x => `<span class="chip ${cls}">${esc(typeof x === "string" ? x : x.skill || x.name || x.topic)}</span>`).join("") || '<span class="muted small">None</span>'}</div>`;
 
   // ---------- shared pieces ----------
-  const zig = (fill = "var(--bg)") => `<svg class="zig" viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0 60 L180 40 L360 70 L560 30 L760 62 L980 26 L1200 58 L1440 34 L1440 90 L0 90Z" fill="${fill}"/><path d="M0 60 L180 40 L360 70 L560 30 L760 62 L980 26 L1200 58 L1440 34" stroke="var(--cyan)" stroke-width="6" fill="none"/></svg>`;
-  const pageHero = (eyebrow, title, sub) => `<section class="page-hero"><div class="wrap"><div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p>${sub}</p></div>${zig()}</section>`;
+  let curRoute = "home";
+  const IMG = (id, w = 900) => `https://images.unsplash.com/photo-${id}?w=${w}&q=72&auto=format&fit=crop`;
+  const zig = (fill = "var(--bg)") => `<svg class="zig" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 64 L160 44 L330 76 L540 34 L740 68 L960 28 L1180 62 L1320 40 L1440 52 L1440 100 L0 100Z" fill="${fill}"/><path class="zline" d="M0 64 L160 44 L330 76 L540 34 L740 68 L960 28 L1180 62 L1320 40 L1440 52" stroke="var(--cyan)" stroke-width="7" fill="none" stroke-linejoin="round"/></svg>`;
+  // draggable hero sticker
+  const stk = (name, pos, o = {}) => `<span class="stk ${o.cls || ""}" style="${pos};--w:${o.w || 96}px" data-depth="${o.depth ?? 0.6}"><span class="stk-in" style="--r:${o.r ?? 0}deg;--delay:${o.delay ?? 0}s">${o.text ? TextSticker(o.text, o.c) : Sticker(name, o)}</span></span>`;
+  // static sticker (cards, rows)
+  const stkS = (name, o = {}) => `<span class="stk-static" style="--w:${o.w || 80}px;--r:${o.r || 0}deg;${o.pos || ""}">${o.text ? TextSticker(o.text, o.c) : Sticker(name, o)}</span>`;
+
+  const HERO = {
+    profile: { s: [["cap", "green"], ["doc", "cyan"], ["sparkle", "pink"]], note: "Evidence &gt; buzzwords.", sub: "only proven skills count" },
+    gap: { s: [["target", "red"], ["search", "green"], ["bolt", "yellow"]], note: "Mind the gap.", sub: "weighted, explainable score" },
+    roadmap: { s: [["map", "green"], ["pin", "red"], ["rocket", "purple"]], note: "Week by week.", sub: "fits your hour budget" },
+    internships: { s: [["brief", "orange"], ["star", "yellow"], ["pin", "pink"]], note: "Ranked by fit.", sub: "not by luck" },
+    tracker: { s: [["board", "purple"], ["trophy", "yellow"], ["sparkle", "cyan"]], note: "Applied → Hired", sub: "drag cards as you hear back" },
+    ats: { s: [["doc", "cyan"], ["eyes", "yellow"], ["bolt", "pink"]], note: "Bots read first.", sub: "then humans do" },
+    interview: { s: [["mic", "pink"], ["chat", "blue"], ["smile", "orange"]], note: "Practice &gt; panic.", sub: "rubric-scored answers" },
+    curriculum: { s: [["school", "orange"], ["pencil", "yellow"], ["bulb", "lime"]], note: "Syllabus check.", sub: "for faculty & HoDs" },
+    insights: { s: [["chart", "lime"], ["coins", "yellow"], ["sparkle", "pink"]], note: "Data, not vibes.", sub: "demand vs coverage" },
+    recruiter: { s: [["brief", "orange"], ["search", "green"], ["heart", "pink"]], note: "Skills &gt; CGPA.", sub: "post in 30 seconds" },
+    resume: { s: [["doc", "cyan"], ["pencil", "yellow"], ["star", "pink"]], note: "One click. Done.", sub: "print or save as PDF" },
+    mentor: { s: [["chat", "blue"], ["bulb", "yellow"], ["heart", "pink"]], note: "Ask anything.", sub: "grounded in your profile" }
+  };
+  const pageHero = (eyebrow, title, sub) => {
+    const h = HERO[curRoute] || HERO.profile;
+    const [a, b, c] = h.s;
+    return `<section class="page-hero">
+      ${stk(a[0], "right:38%;top:26px", { c: a[1], w: 86, r: -14, delay: 0.1, depth: 0.5, cls: "hide-sm" })}
+      ${stk(b[0], "right:3%;top:22px", { c: b[1], w: 104, r: 12, delay: 0.25, depth: 1 })}
+      ${stk(c[0], "right:31%;bottom:84px", { c: c[1], w: 82, r: 8, delay: 0.4, depth: 0.8, cls: "hide-sm" })}
+      <div class="wrap"><div><div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p>${sub}</p></div>
+      <div class="ph-side hide-sm">${Paper(`${h.note}<span class="small-print">${h.sub}</span>`, { rot: curRoute.length % 2 ? -4 : 3, lined: curRoute.length % 3 === 0 })}</div></div>${zig()}</section>`;
+  };
   const profile = () => store.get("profile", null);
-  const needProfile = () => `<div class="card empty fade"><h3>No profile yet</h3><p>Build your skill profile first — it takes 20 seconds.</p><a class="btn" href="#/profile">Create profile</a></div>`;
+  const needProfile = () => `<div class="card empty fade">${stkS("cap", { w: 110, r: -8 })}<h3>No profile yet</h3><p>Build your skill profile first — it takes 20 seconds.</p><a class="btn" href="#/profile">Create profile</a></div>`;
   const allInternships = () => [...store.get("posted", []), ...D.internships];
 
+  // module catalogue: route, sticker, nav label, title, description, tone, tag, photo, tile stickers
   const MODULES = [
-    ["profile", "🎓", "Profile", "Skill Extractor", "AI reads your resume and builds an evidence-backed skill inventory.", "dark", "P1"],
-    ["gap", "🧭", "Skill Gap", "Skill Gap Mapper", "Compare your skills with what employers actually ask for.", "ice", "P2 + P3"],
-    ["roadmap", "🗺️", "Roadmap", "Learning Roadmap", "A week-by-week plan that fits your timetable.", "", "P4"],
-    ["internships", "💼", "Internships", "Internship Portal", "Browse, filter and AI-rank internships by fit.", "dark", "P5"],
-    ["ats", "📄", "ATS Score", "ATS Resume Scorer", "See your resume the way a hiring bot does.", "", "P7"],
-    ["interview", "🎤", "Interview", "Mock Interview", "Gap-aware questions, voice answers, rubric scoring.", "dark", "P8 + P9"],
-    ["curriculum", "🏫", "Curriculum", "Curriculum Auditor", "Faculty: score your syllabus against industry.", "ice", "P6"],
-    ["mentor", "💬", "Mentor", "AI Career Mentor", "Ask anything — answers grounded in your profile.", "", "P10"]
+    { r: "profile", ic: "cap", c: "green", nav: "Profile", t: "Skill Extractor", d: "AI reads your resume and builds an evidence-backed skill inventory.", tone: "", tag: "P1", photo: "1522202176988-66273c2fd55f", s: [["cap", "green", "left:18px;bottom:16px", -12], ["sparkle", "pink", "right:70px;top:-26px", 10]] },
+    { r: "gap", ic: "target", c: "red", nav: "Skill Gap", t: "Skill Gap Mapper", d: "Compare your skills with what employers actually ask for.", tone: "grey", tag: "P2 + P3", s: [["target", "red", "left:12%;top:8%", -10, 150], ["search", "green", "right:8%;top:30%", 12, 120], ["bolt", "yellow", "left:30%;bottom:6%", 6, 100]] },
+    { r: "roadmap", ic: "map", c: "green", nav: "Roadmap", t: "Learning Roadmap", d: "A week-by-week plan that fits your timetable.", tone: "", tag: "P4", photo: "1434030216411-0b793f4b4173", s: [["map", "green", "right:18px;top:-30px", 10], ["pin", "red", "left:20px;bottom:20px", -8]] },
+    { r: "internships", ic: "brief", c: "orange", nav: "Internships", t: "Internship Portal", d: "Browse, filter and AI-rank internships by fit.", tone: "dark", tag: "P5", photo: "1531482615713-2afd69097998", s: [["brief", "orange", "left:18px;top:-34px", -10], ["star", "yellow", "right:72px;bottom:18px", 14]] },
+    { r: "ats", ic: "doc", c: "cyan", nav: "ATS Score", t: "ATS Resume Scorer", d: "See your resume the way a hiring bot does.", tone: "grey", tag: "P7", s: [["doc", "cyan", "left:14%;top:6%", -8, 150], ["eyes", "yellow", "right:10%;top:16%", 10, 110], ["text:94%", "lime", "left:26%;bottom:10%", -6, 140]] },
+    { r: "interview", ic: "mic", c: "pink", nav: "Interview", t: "Mock Interview", d: "Gap-aware questions, voice answers, rubric scoring.", tone: "dark", tag: "P8 + P9", photo: "1573497019940-1c28c88b4f3e", s: [["mic", "pink", "left:16px;top:-30px", -10], ["chat", "blue", "right:70px;bottom:20px", 8]] },
+    { r: "mentor", ic: "chat", c: "blue", nav: "Mentor", t: "AI Career Mentor", d: "Ask anything — answers grounded in your profile.", tone: "grey", tag: "P10", s: [["chat", "blue", "left:10%;top:10%", -6, 150], ["bulb", "yellow", "right:10%;top:4%", 12, 110], ["heart", "pink", "right:22%;bottom:8%", -10, 100]] },
+    { r: "resume", ic: "pencil", c: "yellow", nav: "Resume", t: "Resume Builder", d: "One-click printable resume from your mapped profile.", tone: "", tag: "Builder", photo: "1517694712202-14dd9538aa97", s: [["pencil", "yellow", "right:22px;top:-34px", 14], ["doc", "cyan", "left:18px;bottom:18px", -10]] },
+    { r: "curriculum", ic: "school", c: "orange", nav: "Curriculum", t: "Curriculum Auditor", d: "Faculty: score a syllabus against real industry roles.", tone: "", tag: "P6", photo: "1524178232363-1fb2b075b655", s: [["school", "orange", "left:18px;top:-36px", -8], ["pencil", "yellow", "right:72px;bottom:16px", 12]] },
+    { r: "insights", ic: "chart", c: "lime", nav: "Insights", t: "Skill Demand Insights", d: "Industry demand vs curriculum coverage, at a glance.", tone: "dark", tag: "Analytics", photo: "1551288049-bebda4e38f71", s: [["chart", "lime", "right:20px;top:-34px", 10], ["coins", "yellow", "left:18px;bottom:18px", -10]] },
+    { r: "recruiter", ic: "search", c: "green", nav: "Recruiters", t: "Recruiter Console", d: "Post internships and see best-fit candidates.", tone: "", tag: "Portal", photo: "1552664730-d307ca884978", s: [["brief", "orange", "left:18px;top:-32px", -12], ["heart", "pink", "right:72px;bottom:18px", 10]] },
+    { r: "tracker", ic: "board", c: "purple", nav: "Tracker", t: "Application Tracker", d: "A kanban board for every application.", tone: "grey", tag: "Portal", s: [["board", "purple", "left:12%;top:8%", -8, 150], ["trophy", "yellow", "right:10%;top:22%", 10, 110], ["text:offer!", "pink", "left:20%;bottom:10%", -5, 150]] }
   ];
+  const mod = r => MODULES.find(m => m.r === r);
 
   // ---------- pages ----------
   const pages = {};
 
   pages.home = () => {
     const p = profile(), gap = store.get("gap", null);
+    const skills = [...new Set(Object.values(D.roles).flatMap(r => [...r.must_have, ...r.good_to_have].map(x => x[0])))];
+    const half = Math.ceil(skills.length / 2);
+    const ICONS = ["sparkle", "bolt", "star", "heart", "burst", "smile"];
+    const pills = list => list.map((s, i) => `<span class="pill">${s}${i % 4 === 0 ? ` <b>hot</b>` : ""}</span>${i % 3 === 2 ? stkS(ICONS[i % ICONS.length], { w: 52, r: i % 2 ? 10 : -10 }) : ""}`).join("");
     app.innerHTML = `
     <section class="hero">
-      <svg class="sticker" style="left:4%;top:18px;width:74px" viewBox="0 0 80 80"><path d="M6 30 40 14l34 16-34 16z" fill="#1ee39b" stroke="#000" stroke-width="3"/><path d="M20 38v16c10 8 30 8 40 0V38" fill="#1ee39b" stroke="#000" stroke-width="3"/><path d="M70 32v18" stroke="#000" stroke-width="3"/></svg>
-      <svg class="sticker" style="left:54%;top:14px;width:64px;animation-delay:-2s" viewBox="0 0 80 80"><path d="M40 4l7 22 22-8-14 18 18 14-23 2 2 23-12-19-12 19 2-23-23-2 18-14L11 18l22 8z" fill="#ff3df2" stroke="#000" stroke-width="3"/></svg>
-      <svg class="sticker" style="right:22%;bottom:34px;width:70px;animation-delay:-1s" viewBox="0 0 80 80"><circle cx="40" cy="40" r="30" fill="#ff6a00" stroke="#000" stroke-width="3"/><path d="M26 46c8 10 20 10 28 0" stroke="#000" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="30" cy="32" r="4"/><circle cx="50" cy="32" r="4"/></svg>
-      <svg class="sticker" style="left:36%;bottom:26px;width:64px;animation-delay:-3s" viewBox="0 0 80 80"><rect x="10" y="20" width="60" height="44" rx="8" fill="#ffe600" stroke="#000" stroke-width="3"/><path d="M28 20v-6h24v6" stroke="#000" stroke-width="3" fill="none"/><path d="M10 38h60" stroke="#000" stroke-width="3"/></svg>
+      ${stk("cap", "left:3%;top:7%", { w: 118, r: -14, delay: 0.1, depth: 0.8 })}
+      ${stk("burst", "left:45%;top:6%", { w: 86, r: 10, delay: 0.25, depth: 1.2, cls: "hide-sm" })}
+      ${stk("star", "right:30%;top:9%", { w: 80, r: -8, delay: 0.35, depth: 0.5, cls: "hide-sm" })}
+      ${stk("rocket", "right:4%;top:6%", { w: 108, r: 14, delay: 0.45, depth: 1 })}
+      ${stk("", "left:6%;bottom:15%", { text: "intern szn", c: "pink", w: 170, r: -6, delay: 0.55, depth: 0.7, cls: "hide-sm" })}
+      ${stk("eyes", "left:41%;bottom:11%", { w: 104, r: 6, delay: 0.65, depth: 1.3 })}
+      ${stk("", "right:23%;bottom:14%", { text: "hired!", c: "lime", w: 130, r: 8, delay: 0.75, depth: 0.9, cls: "hide-sm" })}
+      ${stk("brief", "right:13%;bottom:8%", { w: 92, r: -10, delay: 0.85, depth: 0.6, cls: "hide-sm" })}
       <div class="wrap">
-        <div><h1>Bridgr</h1><p class="lead">The AI bridge between what you study and what industry hires for. Map your skills, close the gap, land the internship.</p>
-          <div class="actions"><a class="btn" href="#/profile">${p ? "Update my profile" : "Start free — map my skills"}</a><a class="btn ghost" style="color:#2997ff;border-color:#2997ff" href="#/internships">Browse internships</a></div></div>
-        <div class="hero-side"><h3>Skills, <span class="hl">mapped.</span></h3><a href="#/insights">Institution dashboard ↗</a><a href="#/recruiter">Post an internship ↗</a></div>
+        <div><h1><span class="line"><span>Campus to career,</span></span><span class="line"><span><span class="hl">sorted.</span></span></span></h1>
+          <p class="lead">Bridgr is the AI bridge between what you study and what industry hires for. Map your skills, close the gap, land the internship.</p>
+          <div class="actions"><a class="btn cyan big" href="#/profile">${p ? "Update my profile" : "Map my skills — free"}</a><a class="btn ghost big" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)" href="#/internships">Browse internships</a></div></div>
+        <div class="hero-side">
+          ${Paper("college ✓<br>skills ✓<br>internship …<span class='small-print'>— every 3rd-year, ever</span>", { lined: true, rot: 4, seed: "hero" })}
+          <div class="hint"><svg viewBox="0 0 60 40"><path d="M56 6C40 4 18 10 10 30" stroke="#a1a1a6" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M4 22l6 10 10-6" stroke="#a1a1a6" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>psst… the stickers move</div>
+        </div>
       </div>${zig()}
     </section>
     <div class="wrap">
-      <div class="cats">${MODULES.map(m => `<a class="cat" href="#/${m[0]}"><span class="cat-ic">${m[1]}</span>${m[2]}</a>`).join("")}</div>
+      <div class="cats">${MODULES.map(m => `<a class="cat" href="#/${m.r}">${stkS(m.ic, { c: m.c, w: 70, r: (m.r.length % 3 - 1) * 8 })}${m.nav}</a>`).join("")}</div>
       ${p ? `<section class="sec"><h2 class="sec-h"><span class="hl">Welcome back${p.name ? ", " + esc(p.name.split(" ")[0]) : ""}.</span> <span class="grey">Here's where you stand.</span></h2>
         <div class="grid g3">
-          <div class="card"><div class="muted small">Skills on profile</div><div class="stat">${(p.skills || []).length}</div></div>
-          <div class="card"><div class="muted small">Latest match ${gap ? "· " + esc(gap.role) : ""}</div><div class="stat">${gap ? gap.result.match_score + "%" : "—"}</div></div>
-          <div class="card"><div class="muted small">Applications tracked</div><div class="stat">${store.get("apps", []).length}</div></div>
+          <div class="card"><div class="muted small">Skills on profile</div><div class="stat" data-n="${(p.skills || []).length}">${(p.skills || []).length}</div></div>
+          <div class="card"><div class="muted small">Latest match ${gap ? "· " + esc(gap.role) : ""}</div><div class="stat" ${gap ? `data-n="${gap.result.match_score}" data-suf="%"` : ""}>${gap ? gap.result.match_score + "%" : "—"}</div></div>
+          <div class="card"><div class="muted small">Applications tracked</div><div class="stat" data-n="${store.get("apps", []).length}">${store.get("apps", []).length}</div></div>
         </div></section>` : ""}
       <section class="sec"><h2 class="sec-h"><span class="hl">Student journey.</span> <span class="grey">Get sorted with structured AI prompts.</span></h2>
-        <div class="shelf" id="shelf1">${MODULES.slice(0, 6).map(tile).join("")}</div>
+        <div class="shelf" id="shelf1">${MODULES.slice(0, 8).map(tile).join("")}</div>
         <div class="shelf-nav"><button class="round" data-s="shelf1" data-d="-1" aria-label="Previous">‹</button><button class="round" data-s="shelf1" data-d="1" aria-label="Next">›</button></div>
       </section>
-      <section class="sec"><h2 class="sec-h"><span class="hl">For campuses & companies.</span> <span class="grey">Close the gap from both sides.</span></h2>
-        <div class="shelf" id="shelf2">${[MODULES[6], ["insights", "📊", "Insights", "Skill Demand Insights", "Industry demand vs curriculum coverage, at a glance.", "dark", "Analytics"], ["recruiter", "🏢", "Recruiters", "Recruiter Console", "Post internships and see best-fit candidates.", "", "Portal"], ["tracker", "🗂️", "Tracker", "Application Tracker", "Kanban board for every application.", "ice", "Portal"], ["resume", "🧾", "Resume", "Resume Builder", "One-click resume from your mapped profile.", "dark", "Builder"], MODULES[7]].map(tile).join("")}</div>
+    </div>
+    <section class="band" aria-label="Skills in demand">
+      <div class="lbl">skills industry keeps asking for ↓</div>
+      <div class="marquee"><div class="marquee-track">${pills(skills.slice(0, half))}${pills(skills.slice(0, half))}</div></div>
+      <div class="marquee rev"><div class="marquee-track">${pills(skills.slice(half))}${pills(skills.slice(half))}</div></div>
+    </section>
+    <div class="wrap">
+      <section class="sec"><h2 class="sec-h"><span class="hl">For campuses &amp; companies.</span> <span class="grey">Close the gap from both sides.</span></h2>
+        <div class="shelf" id="shelf2">${MODULES.slice(8).map(tile).join("")}</div>
         <div class="shelf-nav"><button class="round" data-s="shelf2" data-d="-1" aria-label="Previous">‹</button><button class="round" data-s="shelf2" data-d="1" aria-label="Next">›</button></div>
       </section>
+      <section class="sec"><h2 class="sec-h"><span class="hl">The Bridgr difference.</span> <span class="grey">Even more reasons to map with us.</span></h2>
+        <div class="grid g4">
+          <div class="info"><div class="k">Evidence first</div><h3>No proof, no skill.</h3><p>P1 only lists skills backed by a project, course or internship — and quotes the evidence.</p>${stkS("search", { w: 110, r: 8 })}</div>
+          <div class="info"><div class="k">Explainable</div><h3>Scores you can check.</h3><p>Weighted must-have vs good-to-have formula, synonym-aware. No black-box numbers.</p>${stkS("chart", { w: 110, r: -8 })}</div>
+          <div class="info"><div class="k">Private</div><h3>Your data stays put.</h3><p>Profiles, applications and chats live in your browser. Download or wipe them anytime.</p>${stkS("heart", { w: 110, r: 10 })}</div>
+          <div class="info"><div class="k">Always on</div><h3>Works even offline.</h3><p>If the model is unreachable, a labelled offline engine keeps every module usable.</p>${stkS("bolt", { w: 110, r: -6 })}</div>
+        </div></section>
+      <section class="sec">
+        <div class="banner rv">
+          <img src="${IMG("1529156069898-49953e39b3ac", 1800)}" alt="A group of friends sitting together facing the sea" loading="lazy" data-parallax />
+          ${stk("smile", "left:4%;top:8%", { w: 100, r: -10, depth: 0.8 })}
+          ${Paper("your batch.<br>your bridge.", { rot: 5, seed: "banner", kraft: true })}
+          <div class="b-in"><h2>Nobody gets left on the other side.</h2><p>Students see their gaps, faculty see their syllabus, recruiters see real skills. One bridge, three sides.</p>
+            <div class="actions"><a class="btn cyan" href="#/profile">Start with your profile</a><a class="btn ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)" href="#/curriculum">I'm faculty</a></div></div>
+        </div></section>
       <section class="sec"><h2 class="sec-h"><span class="hl">How it works.</span> <span class="grey">Five prompts, one pipeline.</span></h2>
         <div class="steps">
           <div class="step"><h3>Extract</h3><p class="muted">P1 turns your resume into skills with proficiency 1–5 and evidence.</p></div>
@@ -115,10 +185,14 @@
           <div class="step"><h3>Apply</h3><p class="muted">P5 ranks internships; P7 polishes the resume.</p></div>
         </div></section>
     </div>`;
-    $$(".round[data-s]").forEach(b => (b.onclick = () => $("#" + b.dataset.s).scrollBy({ left: b.dataset.d * 360, behavior: "smooth" })));
+    $$(".round[data-s]").forEach(b => (b.onclick = () => $("#" + b.dataset.s).scrollBy({ left: b.dataset.d * 420, behavior: "smooth" })));
   };
   function tile(m) {
-    return `<a class="tile ${m[5]}" href="#/${m[0]}"><span class="cap">${m[5] === "dark" ? "✦" : "◆"}</span><div class="tag">${esc(m[6])}</div><h3>${esc(m[3])}</h3><p>${esc(m[4])}</p><div class="art">${m[1]}</div><span class="go">›</span></a>`;
+    const st = m.s.map(([n, c, pos, r, w]) => n.startsWith("text:") ? stkS("", { text: n.slice(5), c, pos, r, w: w || 130 }) : stkS(n, { c, pos, r, w: w || (m.photo ? 96 : 110) })).join("");
+    const art = m.photo
+      ? `<div class="tile-art"><img src="${IMG(m.photo)}" alt="" loading="lazy" /><div class="shade"></div>${st}</div>`
+      : `<div class="tile-art">${st}</div>`;
+    return `<a class="tile ${m.tone}" href="#/${m.r}"><div class="tile-txt"><div class="tag">${esc(m.tag)}</div><h3>${esc(m.t)}</h3><p>${esc(m.d)}</p></div>${art}<span class="go">+</span></a>`;
   }
 
   // ----- PROFILE (P1)
@@ -369,12 +443,12 @@
     const top = Object.entries(count).sort((a, b) => b[1] - a[1]).slice(0, 10);
     const apps = store.get("apps", []);
     app.innerHTML = pageHero("Analytics · Institution Dashboard", "Where demand <span class='hl'>meets the classroom.</span>", "Live skill demand from open internships on Bridgr, compared with typical curriculum coverage.") + `
-    <div class="wrap lift"><div class="grid g4"><div class="card"><div class="muted small">Open internships</div><div class="stat">${list.length}</div></div><div class="card"><div class="muted small">Avg stipend</div><div class="stat">₹${Math.round(list.reduce((a, i) => a + i.stipend, 0) / list.length / 1000)}k</div></div><div class="card"><div class="muted small">Distinct skills demanded</div><div class="stat">${Object.keys(count).length}</div></div><div class="card"><div class="muted small">Applications (this device)</div><div class="stat">${apps.length}</div></div></div>
+    <div class="wrap lift"><div class="grid g4"><div class="card"><div class="muted small">Open internships</div><div class="stat" data-n="${list.length}">${list.length}</div></div><div class="card"><div class="muted small">Avg stipend</div><div class="stat" data-pre="₹" data-suf="k" data-n="${Math.round(list.reduce((a, i) => a + i.stipend, 0) / list.length / 1000)}">₹${Math.round(list.reduce((a, i) => a + i.stipend, 0) / list.length / 1000)}k</div></div><div class="card"><div class="muted small">Distinct skills demanded</div><div class="stat" data-n="${Object.keys(count).length}">${Object.keys(count).length}</div></div><div class="card"><div class="muted small">Applications (this device)</div><div class="stat" data-n="${apps.length}">${apps.length}</div></div></div>
       <div class="grid g2" style="margin-top:20px"><div class="card"><h3>Most-demanded skills (open internships)</h3><div style="height:320px"><canvas id="c1"></canvas></div></div><div class="card"><h3>Industry demand vs curriculum coverage</h3><p class="small muted">Illustrative index (0–100) · gap = opportunity for new electives</p><div style="height:300px"><canvas id="c2"></canvas></div></div></div>
       <div class="card" style="margin-top:20px"><h3>Biggest academia–industry gaps</h3><div class="tablewrap"><table><tr><th>Skill</th><th>Industry</th><th>Curriculum</th><th>Gap</th></tr>${D.demand.labels.map((l, i) => [l, D.demand.industry[i], D.demand.curriculum[i]]).sort((a, b) => b[1] - b[2] - (a[1] - a[2])).map(r => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td><span class="chip ${r[1] - r[2] > 40 ? "bad" : r[1] - r[2] > 20 ? "mid" : "ok"}">${r[1] - r[2]}</span></td></tr>`).join("")}</table></div><div class="actions"><a class="btn" href="#/curriculum">Audit a syllabus →</a></div></div></div>`;
     const go = () => { if (!window.Chart) return setTimeout(go, 100);
       new Chart($("#c1"), { type: "bar", data: { labels: top.map(t => t[0]), datasets: [{ label: "Internships asking", data: top.map(t => t[1]), backgroundColor: "#0071e3", borderRadius: 8 }] }, options: { indexAxis: "y", maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-      new Chart($("#c2"), { type: "bar", data: { labels: D.demand.labels, datasets: [{ label: "Industry", data: D.demand.industry, backgroundColor: "#00b8d9", borderRadius: 6 }, { label: "Curriculum", data: D.demand.curriculum, backgroundColor: "#1d1d1f", borderRadius: 6 }] }, options: { maintainAspectRatio: false } }); };
+      new Chart($("#c2"), { type: "bar", data: { labels: D.demand.labels, datasets: [{ label: "Industry", data: D.demand.industry, backgroundColor: "#00e0ff", borderRadius: 6 }, { label: "Curriculum", data: D.demand.curriculum, backgroundColor: "#ff3df2", borderRadius: 6 }] }, options: { maintainAspectRatio: false } }); };
     go();
   };
 
@@ -426,7 +500,7 @@
     const send = async () => {
       const t = $("#cm").value.trim(); if (!t) return; $("#cm").value = "";
       const c = store.get("chat", []); c.push({ r: "me", t }); store.set("chat", c);
-      box.insertAdjacentHTML("beforeend", `<div class="msg me">${esc(t)}</div><div class="msg ai" id="typing">…</div>`); box.scrollTop = box.scrollHeight;
+      box.insertAdjacentHTML("beforeend", `<div class="msg me">${esc(t)}</div><div class="msg ai typing" id="typing"><span></span><span></span><span></span></div>`); box.scrollTop = box.scrollHeight;
       const p = profile(), g = store.get("gap", null);
       const ctx = p ? { skills: p.skills.map(s => s.name + ":" + s.level), summary: p.summary, target: g?.role, match: g?.result.match_score, missing: g?.result.missing?.map(m => m.skill) } : {};
       const r = await ai("P10", { student_context: JSON.stringify(ctx), message: t });
@@ -438,16 +512,88 @@
     $("#clr").onclick = () => { store.set("chat", []); route(); };
   };
 
+  // ---------- motion & fun ----------
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let io;
+  function countUp(root) {
+    const els = [...$$("[data-n]", root), ...(root.matches && root.matches("[data-n]") ? [root] : [])];
+    els.forEach(el => {
+      if (el._counted) return; el._counted = true;
+      const n = +el.dataset.n, suf = el.dataset.suf || "", pre = el.dataset.pre || "";
+      if (reduce || !n) return;
+      const t0 = performance.now(), dur = 1100;
+      const f = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = pre + Math.round(n * e) + suf; if (k < 1) requestAnimationFrame(f); };
+      requestAnimationFrame(f);
+    });
+  }
+  function enhance() {
+    io && io.disconnect();
+    io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target; el.classList.add("in"); io.unobserve(el); countUp(el);
+      // hand transform back to hover/tilt effects once revealed
+      if (el.matches(".tile, .job, .step")) setTimeout(() => el.classList.remove("rv", "in"), 900);
+    }), { threshold: 0.1, rootMargin: "0px 0px -30px 0px" });
+    $$(".sec-h, .tile, .info, .step, .cat, .card, .banner", app).forEach(el => {
+      if (el.closest(".hero, .page-hero") || el.classList.contains("in")) return;
+      el.classList.add("rv");
+      el.style.setProperty("--d", Math.min([...el.parentElement.children].indexOf(el), 8) * 0.07 + "s");
+      io.observe(el);
+    });
+    $$(".card.empty", app).forEach((el, i) => { if (!el.querySelector(".stk-static")) el.insertAdjacentHTML("afterbegin", stkS(["sparkle", "star", "bulb", "smile"][i % 4], { w: 90, r: i % 2 ? 8 : -8 })); });
+    tilt(); stickers(); onScroll();
+  }
+  function tilt() {
+    if (reduce || matchMedia("(hover: none)").matches) return;
+    $$(".tile", app).forEach(t => {
+      t.onpointermove = e => { const r = t.getBoundingClientRect(); t.style.setProperty("--ry", (((e.clientX - r.left) / r.width - 0.5) * 7).toFixed(2) + "deg"); t.style.setProperty("--rx", (-((e.clientY - r.top) / r.height - 0.5) * 7).toFixed(2) + "deg"); };
+      t.onpointerleave = () => { t.style.setProperty("--rx", "0deg"); t.style.setProperty("--ry", "0deg"); };
+    });
+  }
+  function stickers() {
+    $$(".stk", app).forEach(s => {
+      let sx, sy, ox, oy, moved = false;
+      s.onpointerdown = e => { e.preventDefault(); s.setPointerCapture(e.pointerId); s.classList.add("drag"); sx = e.clientX; sy = e.clientY; ox = parseFloat(s.style.getPropertyValue("--dx")) || 0; oy = parseFloat(s.style.getPropertyValue("--dy")) || 0; moved = false; };
+      s.onpointermove = e => { if (!s.classList.contains("drag")) return; const dx = e.clientX - sx, dy = e.clientY - sy; if (Math.abs(dx) + Math.abs(dy) > 4) moved = true; s.style.setProperty("--dx", ox + dx + "px"); s.style.setProperty("--dy", oy + dy + "px"); };
+      s.onpointerup = s.onpointercancel = () => {
+        s.classList.remove("drag");
+        if (!moved && !reduce) $("svg", s).animate([{ transform: "rotate(0) scale(1)" }, { transform: "rotate(200deg) scale(1.25)" }, { transform: "rotate(360deg) scale(1)" }], { duration: 750, easing: "cubic-bezier(.34,1.56,.64,1)" });
+      };
+    });
+    if (reduce) return;
+    $$(".hero, .page-hero", app).forEach(hero => {
+      hero.onpointermove = e => {
+        const r = hero.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        $$(".stk", hero).forEach(s => { if (s.classList.contains("drag")) return; const d = +s.dataset.depth || 0.5; s.style.setProperty("--px", (-x * 34 * d).toFixed(1) + "px"); s.style.setProperty("--py", (-y * 26 * d).toFixed(1) + "px"); });
+      };
+    });
+  }
+  const prog = $("#progress");
+  function onScroll() {
+    const h = document.documentElement.scrollHeight - innerHeight;
+    prog.style.transform = `scaleX(${h > 0 ? Math.min(1, scrollY / h) : 0})`;
+    if (reduce) return;
+    $$("[data-parallax]").forEach(img => { const r = img.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return; const k = (r.top + r.height / 2 - innerHeight / 2) / innerHeight; img.style.transform = `translateY(${(-k * 40 - 50).toFixed(1)}px)`; });
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+
   // ---------- router ----------
+  let lastRoute = null;
   function route() {
-    const name = (location.hash.replace(/^#\/?/, "").split("?")[0] || "home");
-    (pages[name] || pages.home)();
-    $$(".gnav-links a").forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#/" + name));
-    $("#gnavLinks").classList.remove("open");
+    const name = location.hash.replace(/^#\/?/, "").split("?")[0] || "home";
+    curRoute = pages[name] ? name : "home";
+    const same = curRoute === lastRoute; lastRoute = curRoute;
+    pages[curRoute]();
+    if (same) app.dataset.re = "1"; else { delete app.dataset.re; app.classList.remove("enter"); void app.offsetWidth; app.classList.add("enter"); }
+    $$(".gnav-links a").forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#/" + curRoute));
+    $("#gnavLinks").classList.remove("open"); $("#menuBtn").setAttribute("aria-expanded", "false");
+    document.title = curRoute === "home" ? "Bridgr — Campus to Career, Sorted" : `${mod(curRoute)?.t || curRoute} · Bridgr`;
+    enhance();
   }
   let lastHash = null;
-  window.addEventListener("hashchange", () => { route(); if (location.hash !== lastHash) window.scrollTo(0, 0); lastHash = location.hash; });
+  window.addEventListener("hashchange", () => { route(); if (location.hash !== lastHash) window.scrollTo({ top: 0, behavior: "instant" }); lastHash = location.hash; });
   $("#dlRuns").onclick = e => { e.preventDefault(); const b = new Blob([JSON.stringify(store.get("runs", []), null, 2)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "bridgr-runs.json"; a.click(); };
   $("#resetAll").onclick = e => { e.preventDefault(); try { Object.keys(localStorage).filter(k => k.startsWith("bridgr.")).forEach(k => localStorage.removeItem(k)); } catch {} toast("Demo data cleared"); route(); };
+  $("#toTop").onclick = e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); };
   route();
 })();

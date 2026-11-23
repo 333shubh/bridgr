@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-23: UI revamp
+- New sticker kit (`code/assets/stickers.js`): hand-made SVG stickers with a halftone print, die-cut white edge and torn-paper notes. No copied artwork.
+- Full-width layout with consistent padding on every page. Page heroes have draggable stickers that also follow the mouse (parallax).
+- Animations: headline rise, highlight-marker sweep, scroll reveals, count-up stats, animated score rings and bars, 3D tilt on tiles, skills marquee, page transitions, scroll progress bar. All of them respect reduced-motion settings.
+- Photo tiles use free Unsplash images, credited in the footer.
+- New multi-column footer, a redesigned logo (bridge mark that draws itself on load), and a mobile menu.
+
 ## 2026-11-22: Milestone 2
 - Added a deployed web prototype on Vercel (https://bridgr-rose.vercel.app).
 - Built a serverless `/api/ai` endpoint calling Gemini 2.5 Flash in JSON mode. Keys come only from environment variables.

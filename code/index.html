@@ -10,7 +10,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
-<link rel="preconnect" href="https://images.unsplash.com" />
 <link rel="stylesheet" href="/assets/styles.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 </head>
@@ -29,6 +28,8 @@
       <mask id="bh-m4" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#bh-g4)"/></mask>
       <mask id="bh-mt1" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#bh-g1)"/></mask>
       <mask id="bh-mt2" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#bh-g2)"/></mask>
+      <pattern id="bh-dots-cyan" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="7" cy="7" r="3" fill="#00e0ff"/></pattern>
+      <filter id="bh-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-opacity=".4"/></filter>
       <filter id="bh-rough" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>
     </defs>
   </svg>
@@ -52,32 +53,26 @@
   <main id="app" tabindex="-1"></main>
 
   <footer class="foot">
-    <div class="foot-band">
-      <div class="wrap foot-band-in">
-        <div><h2>Campus to career, <span class="hl">sorted.</span></h2><p>Map your skills in 20 seconds. No sign-up, nothing leaves your browser except the AI call.</p></div>
-        <a class="btn big" href="#/profile">Start mapping →</a>
-      </div>
-    </div>
     <div class="wrap">
       <div class="foot-cols">
         <div class="foot-brand">
           <a class="logo dark" href="#/" aria-label="Bridgr home"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="2" y="2" width="60" height="60" rx="18" fill="#00e0ff"/><path d="M9 44h46" stroke="#000" stroke-width="5" stroke-linecap="round"/><path d="M12 44C19 20 45 20 52 44" stroke="#000" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M22 44V32M32 44V27M42 44V32" stroke="#000" stroke-width="3.5" stroke-linecap="round"/><path d="M50 8l1.6 4.4L56 14l-4.4 1.6L50 20l-1.6-4.4L44 14l4.4-1.6z" fill="#fff"/></svg><span class="logo-word">bridgr<i>.</i></span></a>
-          <p>The AI bridge between what you study and what industry hires for.</p>
-          <p class="small">Model: <span id="modelBadge">checking…</span></p>
+          <p>Academia–industry skill mapping and internships.</p>
         </div>
-        <div><h4>Students</h4><a href="#/profile">Skill Extractor</a><a href="#/gap">Skill Gap Mapper</a><a href="#/roadmap">Learning Roadmap</a><a href="#/ats">ATS Resume Scorer</a><a href="#/interview">Mock Interview</a><a href="#/mentor">AI Career Mentor</a><a href="#/resume">Resume Builder</a></div>
-        <div><h4>Portal</h4><a href="#/internships">Internships</a><a href="#/tracker">Application Tracker</a><a href="#/recruiter">Recruiter Console</a><h4 class="mt">Institutions</h4><a href="#/curriculum">Curriculum Auditor</a><a href="#/insights">Skill Demand Insights</a></div>
-        <div><h4>Project</h4><a href="https://github.com/333shubh/bridgr" target="_blank" rel="noopener">GitHub repository ↗</a><a href="https://github.com/333shubh/bridgr/tree/main/prompts/final" target="_blank" rel="noopener">Prompt library (P1–P10) ↗</a><a href="https://github.com/333shubh/bridgr/blob/main/docs/diagrams.md" target="_blank" rel="noopener">Architecture diagrams ↗</a><a href="https://github.com/333shubh/bridgr/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog ↗</a></div>
-        <div><h4>Your data</h4><a href="#" id="dlRuns">Download AI run log (JSON)</a><a href="#" id="resetAll">Reset demo data</a><a href="#" id="toTop">Back to top ↑</a><p class="small">Profiles, applications and chats are stored only in this browser.</p></div>
+        <div><h4>Students</h4><a href="#/profile">Skill Extractor</a><a href="#/gap">Skill Gap Mapper</a><a href="#/roadmap">Learning Roadmap</a><a href="#/ats">ATS Resume Scorer</a><a href="#/interview">Mock Interview</a><a href="#/mentor">Career Mentor</a><a href="#/resume">Resume Builder</a></div>
+        <div><h4>Portal</h4><a href="#/internships">Internships</a><a href="#/tracker">Application Tracker</a><a href="#/recruiter">Recruiter Console</a></div>
+        <div><h4>Institutions</h4><a href="#/curriculum">Curriculum Auditor</a><a href="#/insights">Skill Demand Insights</a></div>
+        <div><h4>Project</h4><a href="https://github.com/333shubh/bridgr" target="_blank" rel="noopener">GitHub</a><a href="#" id="dlRuns">Download AI run log</a><a href="#" id="resetAll">Reset demo data</a></div>
       </div>
       <div class="foot-legal">
-        <span>© 2026 Bridgr · SCSE4041 Mini Project</span>
-        <span>Internship listings are sample data for demonstration · Photos from <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a> · Stickers hand-made in SVG</span>
+        <span>© 2026 Bridgr · SCSE4041 Mini Project · Internship listings are sample data.</span>
+        <span>AI: <span id="modelBadge">checking…</span></span>
       </div>
     </div>
   </footer>
   <div id="toast" class="toast" role="status"></div>
   <script src="/assets/stickers.js"></script>
+  <script src="/assets/cutouts.js"></script>
   <script src="/assets/data.js"></script>
   <script src="/assets/engine.js"></script>
   <script src="/assets/app.js"></script>

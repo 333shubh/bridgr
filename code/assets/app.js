@@ -57,7 +57,6 @@
 
   // ---------- shared pieces ----------
   let curRoute = "home";
-  const IMG = (id, w = 900) => `https://images.unsplash.com/photo-${id}?w=${w}&q=72&auto=format&fit=crop`;
   const zig = (fill = "var(--bg)") => `<svg class="zig" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 64 L160 44 L330 76 L540 34 L740 68 L960 28 L1180 62 L1320 40 L1440 52 L1440 100 L0 100Z" fill="${fill}"/><path class="zline" d="M0 64 L160 44 L330 76 L540 34 L740 68 L960 28 L1180 62 L1320 40 L1440 52" stroke="var(--cyan)" stroke-width="7" fill="none" stroke-linejoin="round"/></svg>`;
   // draggable hero sticker
   const stk = (name, pos, o = {}) => `<span class="stk ${o.cls || ""}" style="${pos};--w:${o.w || 96}px" data-depth="${o.depth ?? 0.6}"><span class="stk-in" style="--r:${o.r ?? 0}deg;--delay:${o.delay ?? 0}s">${o.text ? TextSticker(o.text, o.c) : Sticker(name, o)}</span></span>`;
@@ -65,49 +64,150 @@
   const stkS = (name, o = {}) => `<span class="stk-static" style="--w:${o.w || 80}px;--r:${o.r || 0}deg;${o.pos || ""}">${o.text ? TextSticker(o.text, o.c) : Sticker(name, o)}</span>`;
 
   const HERO = {
-    profile: { s: [["cap", "green"], ["doc", "cyan"], ["sparkle", "pink"]], note: "Evidence &gt; buzzwords.", sub: "only proven skills count" },
-    gap: { s: [["target", "red"], ["search", "green"], ["bolt", "yellow"]], note: "Mind the gap.", sub: "weighted, explainable score" },
-    roadmap: { s: [["map", "green"], ["pin", "red"], ["rocket", "purple"]], note: "Week by week.", sub: "fits your hour budget" },
-    internships: { s: [["brief", "orange"], ["star", "yellow"], ["pin", "pink"]], note: "Ranked by fit.", sub: "not by luck" },
-    tracker: { s: [["board", "purple"], ["trophy", "yellow"], ["sparkle", "cyan"]], note: "Applied → Hired", sub: "drag cards as you hear back" },
-    ats: { s: [["doc", "cyan"], ["eyes", "yellow"], ["bolt", "pink"]], note: "Bots read first.", sub: "then humans do" },
-    interview: { s: [["mic", "pink"], ["chat", "blue"], ["smile", "orange"]], note: "Practice &gt; panic.", sub: "rubric-scored answers" },
-    curriculum: { s: [["school", "orange"], ["pencil", "yellow"], ["bulb", "lime"]], note: "Syllabus check.", sub: "for faculty & HoDs" },
-    insights: { s: [["chart", "lime"], ["coins", "yellow"], ["sparkle", "pink"]], note: "Data, not vibes.", sub: "demand vs coverage" },
-    recruiter: { s: [["brief", "orange"], ["search", "green"], ["heart", "pink"]], note: "Skills &gt; CGPA.", sub: "post in 30 seconds" },
-    resume: { s: [["doc", "cyan"], ["pencil", "yellow"], ["star", "pink"]], note: "One click. Done.", sub: "print or save as PDF" },
-    mentor: { s: [["chat", "blue"], ["bulb", "yellow"], ["heart", "pink"]], note: "Ask anything.", sub: "grounded in your profile" }
+    profile: { s: [["cap", "green"], ["doc", "cyan"], ["sparkle", "pink"]], note: "Evidence &gt; buzzwords.", sub: "Only proven skills count" },
+    gap: { s: [["target", "red"], ["search", "green"], ["bolt", "yellow"]], note: "Mind the gap.", sub: "Weighted, explainable score" },
+    roadmap: { s: [["map", "green"], ["pin", "red"], ["rocket", "purple"]], note: "Week by week.", sub: "Fits your hour budget" },
+    internships: { s: [["brief", "orange"], ["star", "yellow"], ["pin", "pink"]], note: "Ranked by fit.", sub: "Not by luck" },
+    tracker: { s: [["board", "purple"], ["trophy", "yellow"], ["sparkle", "cyan"]], note: "Applied → Hired", sub: "Drag cards as you hear back" },
+    ats: { s: [["doc", "cyan"], ["eyes", "yellow"], ["bolt", "pink"]], note: "Bots read first.", sub: "Then humans do" },
+    interview: { s: [["mic", "pink"], ["chat", "blue"], ["smile", "orange"]], note: "Practice &gt; panic.", sub: "Rubric-scored answers" },
+    curriculum: { s: [["school", "orange"], ["pencil", "yellow"], ["bulb", "lime"]], note: "Syllabus check.", sub: "For faculty and HoDs" },
+    insights: { s: [["chart", "lime"], ["coins", "yellow"], ["sparkle", "pink"]], note: "Data, not vibes.", sub: "Demand vs coverage" },
+    recruiter: { s: [["brief", "orange"], ["search", "green"], ["heart", "pink"]], note: "Skills &gt; CGPA.", sub: "Post in 30 seconds" },
+    resume: { s: [["doc", "cyan"], ["pencil", "yellow"], ["star", "pink"]], note: "One click. Done.", sub: "Print or save as PDF" },
+    mentor: { s: [["chat", "blue"], ["bulb", "yellow"], ["heart", "pink"]], note: "Ask anything.", sub: "Grounded in your profile" }
+  };
+  const GROUPS = { Students: ["profile", "gap", "roadmap", "ats", "interview", "mentor", "resume"], Portal: ["internships", "tracker", "recruiter"], Institutions: ["curriculum", "insights"] };
+  // Apple-style in-page tab row under the hero
+  const subnav = () => {
+    const [grp, list] = Object.entries(GROUPS).find(([, a]) => a.includes(curRoute)) || ["", []];
+    return `<nav class="subnav" aria-label="${grp} tools"><div class="wrap"><div class="subnav-in"><span class="subnav-k">${grp}</span>${list.map(r => `<a href="#/${r}" class="${r === curRoute ? "on" : ""}" ${r === curRoute ? 'aria-current="page"' : ""}>${mod(r).t}</a>`).join("")}</div></div></nav>`;
   };
   const pageHero = (eyebrow, title, sub) => {
-    const h = HERO[curRoute] || HERO.profile;
-    const [a, b, c] = h.s;
+    const h = HERO[curRoute] || HERO.profile, [, b, c] = h.s, art = CUTOUTS[curRoute];
     return `<section class="page-hero">
-      ${stk(a[0], "right:38%;top:26px", { c: a[1], w: 86, r: -14, delay: 0.1, depth: 0.5, cls: "hide-sm" })}
-      ${stk(b[0], "right:3%;top:22px", { c: b[1], w: 104, r: 12, delay: 0.25, depth: 1 })}
-      ${stk(c[0], "right:31%;bottom:84px", { c: c[1], w: 82, r: 8, delay: 0.4, depth: 0.8, cls: "hide-sm" })}
+      ${stk(c[0], "left:46%;top:24px", { c: c[1], w: 72, r: -10, delay: 0.2, depth: 0.6, cls: "hide-sm" })}
       <div class="wrap"><div><div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p>${sub}</p></div>
-      <div class="ph-side hide-sm">${Paper(`${h.note}<span class="small-print">${h.sub}</span>`, { rot: curRoute.length % 2 ? -4 : 3, lined: curRoute.length % 3 === 0 })}</div></div>${zig()}</section>`;
+      ${art ? `<div class="ph-side"><div class="ph-stage">${stk(b[0], "right:-22px;top:-30px", { c: b[1], w: 84, r: 12, delay: 0.35, depth: 1 })}<div class="ph-cap">${h.note} <span>${h.sub}</span></div><div class="stage-in">${art(cutCtx())}</div></div></div>` : ""}</div>${zig()}</section>${subnav()}`;
   };
   const profile = () => store.get("profile", null);
-  const needProfile = () => `<div class="card empty fade">${stkS("cap", { w: 110, r: -8 })}<h3>No profile yet</h3><p>Build your skill profile first — it takes 20 seconds.</p><a class="btn" href="#/profile">Create profile</a></div>`;
+  const cutCtx = () => ({ p: profile(), gap: store.get("gap", null), rm: store.get("roadmap", null), iv: store.get("interview", null), fits: store.get("fits", {}), apps: store.get("apps", []), D });
+  const needProfile = () => `<div class="card empty fade">${stkS("cap", { w: 110, r: -8 })}<h3>No profile yet</h3><p>Build your skill profile first. It takes 20 seconds.</p><a class="btn" href="#/profile">Create profile</a></div>`;
   const allInternships = () => [...store.get("posted", []), ...D.internships];
 
-  // module catalogue: route, sticker, nav label, title, description, tone, tag, photo, tile stickers
+  // module catalogue: route, sticker, colour, nav label, title, description, tone, tag, accent sticker [name, colour, position, rotation]
   const MODULES = [
-    { r: "profile", ic: "cap", c: "green", nav: "Profile", t: "Skill Extractor", d: "AI reads your resume and builds an evidence-backed skill inventory.", tone: "", tag: "P1", photo: "1522202176988-66273c2fd55f", s: [["cap", "green", "left:18px;bottom:16px", -12], ["sparkle", "pink", "right:70px;top:-26px", 10]] },
-    { r: "gap", ic: "target", c: "red", nav: "Skill Gap", t: "Skill Gap Mapper", d: "Compare your skills with what employers actually ask for.", tone: "grey", tag: "P2 + P3", s: [["target", "red", "left:12%;top:8%", -10, 150], ["search", "green", "right:8%;top:30%", 12, 120], ["bolt", "yellow", "left:30%;bottom:6%", 6, 100]] },
-    { r: "roadmap", ic: "map", c: "green", nav: "Roadmap", t: "Learning Roadmap", d: "A week-by-week plan that fits your timetable.", tone: "", tag: "P4", photo: "1434030216411-0b793f4b4173", s: [["map", "green", "right:18px;top:-30px", 10], ["pin", "red", "left:20px;bottom:20px", -8]] },
-    { r: "internships", ic: "brief", c: "orange", nav: "Internships", t: "Internship Portal", d: "Browse, filter and AI-rank internships by fit.", tone: "dark", tag: "P5", photo: "1531482615713-2afd69097998", s: [["brief", "orange", "left:18px;top:-34px", -10], ["star", "yellow", "right:72px;bottom:18px", 14]] },
-    { r: "ats", ic: "doc", c: "cyan", nav: "ATS Score", t: "ATS Resume Scorer", d: "See your resume the way a hiring bot does.", tone: "grey", tag: "P7", s: [["doc", "cyan", "left:14%;top:6%", -8, 150], ["eyes", "yellow", "right:10%;top:16%", 10, 110], ["text:94%", "lime", "left:26%;bottom:10%", -6, 140]] },
-    { r: "interview", ic: "mic", c: "pink", nav: "Interview", t: "Mock Interview", d: "Gap-aware questions, voice answers, rubric scoring.", tone: "dark", tag: "P8 + P9", photo: "1573497019940-1c28c88b4f3e", s: [["mic", "pink", "left:16px;top:-30px", -10], ["chat", "blue", "right:70px;bottom:20px", 8]] },
-    { r: "mentor", ic: "chat", c: "blue", nav: "Mentor", t: "AI Career Mentor", d: "Ask anything — answers grounded in your profile.", tone: "grey", tag: "P10", s: [["chat", "blue", "left:10%;top:10%", -6, 150], ["bulb", "yellow", "right:10%;top:4%", 12, 110], ["heart", "pink", "right:22%;bottom:8%", -10, 100]] },
-    { r: "resume", ic: "pencil", c: "yellow", nav: "Resume", t: "Resume Builder", d: "One-click printable resume from your mapped profile.", tone: "", tag: "Builder", photo: "1517694712202-14dd9538aa97", s: [["pencil", "yellow", "right:22px;top:-34px", 14], ["doc", "cyan", "left:18px;bottom:18px", -10]] },
-    { r: "curriculum", ic: "school", c: "orange", nav: "Curriculum", t: "Curriculum Auditor", d: "Faculty: score a syllabus against real industry roles.", tone: "", tag: "P6", photo: "1524178232363-1fb2b075b655", s: [["school", "orange", "left:18px;top:-36px", -8], ["pencil", "yellow", "right:72px;bottom:16px", 12]] },
-    { r: "insights", ic: "chart", c: "lime", nav: "Insights", t: "Skill Demand Insights", d: "Industry demand vs curriculum coverage, at a glance.", tone: "dark", tag: "Analytics", photo: "1551288049-bebda4e38f71", s: [["chart", "lime", "right:20px;top:-34px", 10], ["coins", "yellow", "left:18px;bottom:18px", -10]] },
-    { r: "recruiter", ic: "search", c: "green", nav: "Recruiters", t: "Recruiter Console", d: "Post internships and see best-fit candidates.", tone: "", tag: "Portal", photo: "1552664730-d307ca884978", s: [["brief", "orange", "left:18px;top:-32px", -12], ["heart", "pink", "right:72px;bottom:18px", 10]] },
-    { r: "tracker", ic: "board", c: "purple", nav: "Tracker", t: "Application Tracker", d: "A kanban board for every application.", tone: "grey", tag: "Portal", s: [["board", "purple", "left:12%;top:8%", -8, 150], ["trophy", "yellow", "right:10%;top:22%", 10, 110], ["text:offer!", "pink", "left:20%;bottom:10%", -5, 150]] }
+    { r: "profile", ic: "cap", c: "green", nav: "Profile", t: "Skill Extractor", d: "AI reads your resume and builds an evidence-backed skill inventory.", tone: "grey", tag: "P1", acc: ["cap", "green", "right:6%;top:2%", 12] },
+    { r: "gap", ic: "target", c: "red", nav: "Skill Gap", t: "Skill Gap Mapper", d: "Compare your skills with what employers actually ask for.", tone: "dark", tag: "P2 + P3", acc: ["bolt", "yellow", "right:5%;top:1%", 10] },
+    { r: "roadmap", ic: "map", c: "green", nav: "Roadmap", t: "Learning Roadmap", d: "A week-by-week plan that fits your timetable.", tone: "grey", tag: "P4", acc: ["pin", "red", "left:4%;bottom:6%", -8] },
+    { r: "internships", ic: "brief", c: "orange", nav: "Internships", t: "Internship Portal", d: "Browse, filter and AI-rank internships by fit.", tone: "", tag: "P5", acc: ["star", "yellow", "right:5%;top:0%", 14] },
+    { r: "ats", ic: "doc", c: "cyan", nav: "ATS Score", t: "ATS Resume Scorer", d: "See your resume the way a hiring bot does.", tone: "grey", tag: "P7", acc: ["eyes", "yellow", "left:5%;bottom:5%", -8] },
+    { r: "interview", ic: "mic", c: "pink", nav: "Interview", t: "Mock Interview", d: "Gap-aware questions, voice answers, rubric scoring.", tone: "dark", tag: "P8 + P9", acc: ["mic", "pink", "left:5%;bottom:4%", -10] },
+    { r: "mentor", ic: "chat", c: "blue", nav: "Mentor", t: "AI Career Mentor", d: "Ask anything. Answers are grounded in your profile.", tone: "grey", tag: "P10", acc: ["bulb", "yellow", "right:6%;bottom:4%", 10] },
+    { r: "resume", ic: "pencil", c: "yellow", nav: "Resume", t: "Resume Builder", d: "One-click printable resume from your mapped profile.", tone: "", tag: "Builder", acc: ["pencil", "yellow", "left:5%;bottom:6%", -12] },
+    { r: "curriculum", ic: "school", c: "orange", nav: "Curriculum", t: "Curriculum Auditor", d: "Faculty: score a syllabus against real industry roles.", tone: "grey", tag: "P6", acc: ["school", "orange", "left:5%;bottom:4%", -8] },
+    { r: "insights", ic: "chart", c: "lime", nav: "Insights", t: "Skill Demand Insights", d: "Industry demand vs curriculum coverage, at a glance.", tone: "dark", tag: "Analytics", acc: ["coins", "yellow", "right:6%;top:0%", 10] },
+    { r: "recruiter", ic: "search", c: "green", nav: "Recruiters", t: "Recruiter Console", d: "Post internships and see best-fit candidates.", tone: "", tag: "Portal", acc: ["heart", "pink", "left:5%;bottom:5%", -10] },
+    { r: "tracker", ic: "board", c: "purple", nav: "Tracker", t: "Application Tracker", d: "A kanban board for every application.", tone: "grey", tag: "Portal", acc: ["trophy", "yellow", "left:5%;bottom:4%", -8] }
   ];
   const mod = r => MODULES.find(m => m.r === r);
+
+  // ---------- landing page ----------
+  // Hero window: scores the visitor's saved profile against four roles from data.js, or a labelled sample student if there is none
+  const SAMPLE = { name: "Sample student", skills: Object.entries({ Python: 4, SQL: 3, Excel: 4, Pandas: 2, Statistics: 1, "Data Visualization": 2, HTML: 3, CSS: 3, JavaScript: 2, Git: 3, Communication: 4, "User Research": 2, "Machine Learning": 1, NumPy: 2, "Product Thinking": 2, "Data Analysis": 3, "Responsive Design": 1 }).map(([name, level]) => ({ name, level })) };
+  const DEMO_ROLES = [["Data Analyst Intern", "Data Analyst"], ["Frontend Developer Intern", "Frontend"], ["ML Engineer Intern", "ML Engineer"], ["Product Management Intern", "Product"]].filter(([r]) => D.roles[r]);
+  const nrm = s => String(s || "").toLowerCase().replace(/[^a-z0-9+#]/g, "");
+  function demoMatch(role, p) {
+    const lv = {}; (p.skills || []).forEach(s => (lv[nrm(s.name)] = +s.level || 0));
+    let got = 0, tot = 0;
+    const rows = D.roles[role].must_have.map(([s, w, lvl]) => { const have = lv[nrm(s)] || 0; tot += w; got += w * Math.min(1, have / lvl); return { s, w, lvl, have, st: have >= lvl ? "ok" : have ? "mid" : "bad" }; });
+    const next = rows.filter(r => r.st !== "ok").sort((a, b) => b.w * (b.lvl - b.have) / b.lvl - a.w * (a.lvl - a.have) / a.lvl)[0];
+    const gain = next ? Math.round(next.w * (1 - Math.min(1, next.have / next.lvl)) / tot * 100) : 0;
+    return { score: Math.round(got / tot * 100), rows: rows.slice(0, 5), next, gain };
+  }
+  function heroDemo(i = 0) {
+    const el = $("#demo"); if (!el) return;
+    const [role] = DEMO_ROLES[i], mine = profile(), has = !!(mine && (mine.skills || []).length), p = has ? mine : SAMPLE;
+    const tabs = `<div class="dw-tabs" role="tablist" aria-label="Roles">${DEMO_ROLES.map(([, l], j) => `<button role="tab" aria-selected="${j === i}" class="${j === i ? "on" : ""}" data-demo="${j}">${l}<span class="dw-t"><b></b></span></button>`).join("")}</div>`;
+    let body;
+    {
+      const m = demoMatch(role, p), LBL = { ok: "Matched", mid: "Partial", bad: "Missing" };
+      body = `<div class="dw-head"><div class="dw-ring" style="--v:${m.score}"><b data-n="${m.score}" data-suf="%">${m.score}%</b></div>
+          <div><small>${has ? esc(p.name || "Your profile") + " · " + p.skills.length + " skills" : "Sample student · B.Tech CSE, 3rd year"}</small><h4>${esc(role)}</h4><span class="dw-sub">${m.rows.filter(r => r.st === "ok").length} of ${m.rows.length} core skills matched</span></div></div>
+        <div class="dw-rows"><div class="dw-row h"><span>Skill</span><span>You · <u>need</u></span><span>Status</span></div>
+          ${m.rows.map((r, k) => `<div class="dw-row" style="--k:${k}"><span>${esc(r.s)}</span><span class="dw-lv">${[1, 2, 3, 4, 5].map(n => `<i class="${n <= r.have ? "on" : ""}${n === r.lvl ? " req" : ""}"></i>`).join("")}</span><span class="cu-chip ${r.st}">${LBL[r.st]}</span></div>`).join("")}</div>
+        ${m.next ? `<a class="dw-next" href="#/gap"><span>Next best step</span><b>Learn ${esc(m.next.s)}</b><em>+${m.gain}% match</em></a>` : `<a class="dw-next" href="#/internships"><span>Ready</span><b>Every core skill matched</b><em>See internships →</em></a>`}`;
+    }
+    el.innerHTML = `<div class="dw-bar"><i></i><i></i><i></i><span>Skill Gap Mapper</span><em>${has ? "Your profile" : "Live demo"}</em></div>${tabs}<div class="dw-body">${body}</div>`;
+    countUp(el);
+    $$("[data-demo]", el).forEach(b => (b.onclick = () => heroDemo(+b.dataset.demo)));
+    if (!reduce) $(".dw-tabs .on b", el).onanimationend = () => heroDemo((i + 1) % DEMO_ROLES.length);
+  }
+
+  // How it works: a pinned panel whose step follows the scroll position
+  const STEPS = [
+    ["profile", "P1", "Extract", "Paste a resume. Bridgr lists only the skills it can back with evidence, each rated 1 to 5."],
+    ["jd", "P2", "Analyse", "Any job post becomes weighted must-have and good-to-have requirements."],
+    ["gap", "P3", "Compare", "An explainable match score, with matched, partial and missing skills."],
+    ["roadmap", "P4", "Close the gap", "A week-by-week plan sized to the hours you actually have."],
+    ["internships", "P5", "Apply", "Internships ranked by fit, then tracked from applied to offer."]
+  ];
+  let curStep = -1;
+  function showStep(i) {
+    const s = $("#show"); if (!s || i === curStep) return; curStep = i;
+    $$(".st-btn", s).forEach((b, j) => { b.classList.toggle("on", j === i); b.classList.toggle("done", j < i); b.setAttribute("aria-selected", String(j === i)); });
+    $(".stage-in", s).innerHTML = CUTOUTS[STEPS[i][0]](cutCtx());
+    $(".stage-cap", s).textContent = `Prompt ${STEPS[i][1]} · ${STEPS[i][2]}`;
+    $(".st-cur b", s).textContent = STEPS[i][2]; $(".st-cur p", s).textContent = STEPS[i][3];
+  }
+
+  // scroll-pinned sections: card rows slide sideways and the showcase steps forward as the page scrolls down
+  let PINS = [];
+  const NAV_H = 52;
+  function setupPins() {
+    PINS = [];
+    const pinOK = !reduce;
+    $$(".hscroll", app).forEach(sec => {
+      sec.classList.toggle("static", !pinOK); if (!pinOK) return;
+      const pin = $(".hs-pin", sec), track = $(".hs-track", sec), bar = $(".hs-prog i", sec);
+      const o = { kind: "row", sec, pin, track, bar, dist: 0 };
+      o.measure = () => {
+        track.style.transform = "";
+        const last = track.lastElementChild, pad = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+        o.dist = Math.max(0, last.offsetLeft + last.offsetWidth + pad - track.clientWidth);
+        sec.classList.toggle("fits", o.dist < 4);
+        sec.style.height = o.dist < 4 ? "" : pin.offsetHeight + o.dist + "px";
+      };
+      PINS.push(o);
+    });
+    const show = $(".show-pin", app);
+    if (show) {
+      show.classList.toggle("static", !pinOK);
+      if (pinOK) {
+        const pin = $(".show-sticky", show);
+        const o = { kind: "show", sec: show, pin };
+        o.measure = () => (show.style.height = pin.offsetHeight + STEPS.length * Math.max(260, innerHeight * 0.55) + "px");
+        PINS.push(o);
+        $$(".st-btn", show).forEach((b, j) => (b.onclick = () => { const total = show.offsetHeight - pin.offsetHeight; scrollTo({ top: show.getBoundingClientRect().top + scrollY - NAV_H + total * (j + 0.5) / STEPS.length, behavior: "smooth" }); }));
+      } else $$(".st-btn", show).forEach((b, j) => (b.onclick = () => showStep(j)));
+      curStep = -1; showStep(0);
+    }
+    PINS.forEach(o => o.measure()); updatePins();
+  }
+  function updatePins() {
+    PINS.forEach(o => {
+      if (!o.sec.isConnected) return;
+      const total = o.sec.offsetHeight - o.pin.offsetHeight, top = o.sec.getBoundingClientRect().top - NAV_H;
+      const k = total > 0 ? Math.min(1, Math.max(0, -top / total)) : 0;
+      if (o.kind === "row") { o.track.style.transform = `translate3d(${(-k * o.dist).toFixed(1)}px,0,0)`; if (o.bar) o.bar.style.transform = `scaleX(${k})`; }
+      else {
+        const f = k * STEPS.length, i = Math.min(STEPS.length - 1, Math.floor(f));
+        showStep(i);
+        const bar = $(".st-btn.on .st-bar i", o.sec); if (bar) bar.style.transform = `scaleX(${Math.min(1, f - i)})`;
+      }
+    });
+  }
+  addEventListener("resize", () => { PINS.forEach(o => o.measure()); updatePins(); });
 
   // ---------- pages ----------
   const pages = {};
@@ -117,82 +217,74 @@
     const skills = [...new Set(Object.values(D.roles).flatMap(r => [...r.must_have, ...r.good_to_have].map(x => x[0])))];
     const half = Math.ceil(skills.length / 2);
     const ICONS = ["sparkle", "bolt", "star", "heart", "burst", "smile"];
-    const pills = list => list.map((s, i) => `<span class="pill">${s}${i % 4 === 0 ? ` <b>hot</b>` : ""}</span>${i % 3 === 2 ? stkS(ICONS[i % ICONS.length], { w: 52, r: i % 2 ? 10 : -10 }) : ""}`).join("");
+    const pills = list => list.map((s, i) => `<span class="pill">${s}</span>${i % 3 === 2 ? stkS(ICONS[i % ICONS.length], { w: 46, r: i % 2 ? 10 : -10 }) : ""}`).join("");
+    const ctx = cutCtx();
+    const row = (id, head, more, list) => `<section class="hscroll" id="${id}"><div class="hs-pin">
+        <div class="wrap"><div class="sec-top">${head}${more}</div></div>
+        <div class="hs-track">${list.map(m => tile(m, ctx)).join("")}</div>
+        <div class="wrap hs-foot"><div class="hs-prog"><i></i></div><span>Keep scrolling</span></div></div></section>`;
     app.innerHTML = `
     <section class="hero">
-      ${stk("cap", "left:3%;top:7%", { w: 118, r: -14, delay: 0.1, depth: 0.8 })}
-      ${stk("burst", "left:45%;top:6%", { w: 86, r: 10, delay: 0.25, depth: 1.2, cls: "hide-sm" })}
-      ${stk("star", "right:30%;top:9%", { w: 80, r: -8, delay: 0.35, depth: 0.5, cls: "hide-sm" })}
-      ${stk("rocket", "right:4%;top:6%", { w: 108, r: 14, delay: 0.45, depth: 1 })}
-      ${stk("", "left:6%;bottom:15%", { text: "intern szn", c: "pink", w: 170, r: -6, delay: 0.55, depth: 0.7, cls: "hide-sm" })}
-      ${stk("eyes", "left:41%;bottom:11%", { w: 104, r: 6, delay: 0.65, depth: 1.3 })}
-      ${stk("", "right:23%;bottom:14%", { text: "hired!", c: "lime", w: 130, r: 8, delay: 0.75, depth: 0.9, cls: "hide-sm" })}
-      ${stk("brief", "right:13%;bottom:8%", { w: 92, r: -10, delay: 0.85, depth: 0.6, cls: "hide-sm" })}
+      ${stk("cap", "left:2.5%;top:6%", { w: 92, r: -14, delay: 0.1, depth: 0.8, cls: "hide-sm" })}
       <div class="wrap">
-        <div><h1><span class="line"><span>Campus to career,</span></span><span class="line"><span><span class="hl">sorted.</span></span></span></h1>
-          <p class="lead">Bridgr is the AI bridge between what you study and what industry hires for. Map your skills, close the gap, land the internship.</p>
-          <div class="actions"><a class="btn cyan big" href="#/profile">${p ? "Update my profile" : "Map my skills — free"}</a><a class="btn ghost big" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)" href="#/internships">Browse internships</a></div></div>
-        <div class="hero-side">
-          ${Paper("college ✓<br>skills ✓<br>internship …<span class='small-print'>— every 3rd-year, ever</span>", { lined: true, rot: 4, seed: "hero" })}
-          <div class="hint"><svg viewBox="0 0 60 40"><path d="M56 6C40 4 18 10 10 30" stroke="#a1a1a6" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M4 22l6 10 10-6" stroke="#a1a1a6" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>psst… the stickers move</div>
+        <div class="hero-copy">
+          <div class="eyebrow">Skill mapping · Internships · Curriculum</div>
+          <h1><span class="line"><span>Campus to career,</span></span><span class="line"><span><span class="hl">sorted.</span></span></span></h1>
+          <p class="lead">Bridgr compares what you study with what industry hires for. Map your skills, close the gap and land the internship.</p>
+          <div class="actions"><a class="btn cyan big" href="#/profile">${p ? "Update my profile" : "Map my skills"}</a><a class="btn ghost big on-dark" href="#/internships">Browse internships</a></div>
+          <ul class="hero-trust"><li>No sign-up</li><li>Explainable scores</li><li>Works offline</li></ul>
+        </div>
+        <div class="demo-wrap">
+          ${stk("star", "left:-34px;top:-40px", { c: "yellow", w: 82, r: 14, delay: 0.5, depth: 1.1 })}
+          <div class="demo" id="demo" aria-label="Skill match for four roles"></div>
         </div>
       </div>${zig()}
     </section>
-    <div class="wrap">
-      <div class="cats">${MODULES.map(m => `<a class="cat" href="#/${m.r}">${stkS(m.ic, { c: m.c, w: 70, r: (m.r.length % 3 - 1) * 8 })}${m.nav}</a>`).join("")}</div>
-      ${p ? `<section class="sec"><h2 class="sec-h"><span class="hl">Welcome back${p.name ? ", " + esc(p.name.split(" ")[0]) : ""}.</span> <span class="grey">Here's where you stand.</span></h2>
+    <nav class="subnav" aria-label="On this page"><div class="wrap"><div class="subnav-in">${[["students", "Student tools"], ["how", "How it works"], ["campus", "Campuses &amp; companies"], ["diff", "Why Bridgr"]].map(([id, l]) => `<a href="#/" data-jump="${id}">${l}</a>`).join("")}</div></div></nav>
+    ${p ? `<div class="wrap"><section class="sec"><h2 class="sec-h"><span class="hl">Welcome back${p.name ? ", " + esc(p.name.split(" ")[0]) : ""}.</span> <span class="grey">Here's where you stand.</span></h2>
         <div class="grid g3">
           <div class="card"><div class="muted small">Skills on profile</div><div class="stat" data-n="${(p.skills || []).length}">${(p.skills || []).length}</div></div>
           <div class="card"><div class="muted small">Latest match ${gap ? "· " + esc(gap.role) : ""}</div><div class="stat" ${gap ? `data-n="${gap.result.match_score}" data-suf="%"` : ""}>${gap ? gap.result.match_score + "%" : "—"}</div></div>
           <div class="card"><div class="muted small">Applications tracked</div><div class="stat" data-n="${store.get("apps", []).length}">${store.get("apps", []).length}</div></div>
-        </div></section>` : ""}
-      <section class="sec"><h2 class="sec-h"><span class="hl">Student journey.</span> <span class="grey">Get sorted with structured AI prompts.</span></h2>
-        <div class="shelf" id="shelf1">${MODULES.slice(0, 8).map(tile).join("")}</div>
-        <div class="shelf-nav"><button class="round" data-s="shelf1" data-d="-1" aria-label="Previous">‹</button><button class="round" data-s="shelf1" data-d="1" aria-label="Next">›</button></div>
-      </section>
-    </div>
+        </div></section></div>` : ""}
+    ${row("students", `<h2 class="sec-h"><span class="hl">Student tools.</span> <span class="grey">From first resume to first offer.</span></h2>`, `<a class="more" href="#/profile">Start with Skill Extractor ›</a>`, MODULES.slice(0, 8))}
     <section class="band" aria-label="Skills in demand">
-      <div class="lbl">skills industry keeps asking for ↓</div>
+      <div class="lbl">Skills employers ask for most</div>
       <div class="marquee"><div class="marquee-track">${pills(skills.slice(0, half))}${pills(skills.slice(0, half))}</div></div>
       <div class="marquee rev"><div class="marquee-track">${pills(skills.slice(half))}${pills(skills.slice(half))}</div></div>
     </section>
+    <section class="show-pin" id="how"><div class="show-sticky"><div class="wrap"><div class="show" id="show">
+        <div class="show-l"><div class="k">How it works</div><h2>From resume to offer, in five prompts.</h2>
+          <div class="st-list" role="tablist" aria-label="Pipeline steps">${STEPS.map(([, pr, t, d]) => `<button class="st-btn" role="tab" aria-selected="false"><span class="st-n">${pr}</span><span class="st-t">${t}</span><span class="st-d">${d}</span><span class="st-bar"><i></i></span></button>`).join("")}</div><div class="st-cur" aria-live="polite"><b></b><p></p></div></div>
+        <div class="stage"><div class="stage-cap"></div><div class="stage-in"></div></div>
+    </div></div></div></section>
+    ${row("campus", `<h2 class="sec-h"><span class="hl">Campuses &amp; companies.</span> <span class="grey">Close the gap from both sides.</span></h2>`, `<a class="more" href="#/curriculum">Audit a syllabus ›</a>`, MODULES.slice(8))}
     <div class="wrap">
-      <section class="sec"><h2 class="sec-h"><span class="hl">For campuses &amp; companies.</span> <span class="grey">Close the gap from both sides.</span></h2>
-        <div class="shelf" id="shelf2">${MODULES.slice(8).map(tile).join("")}</div>
-        <div class="shelf-nav"><button class="round" data-s="shelf2" data-d="-1" aria-label="Previous">‹</button><button class="round" data-s="shelf2" data-d="1" aria-label="Next">›</button></div>
-      </section>
-      <section class="sec"><h2 class="sec-h"><span class="hl">The Bridgr difference.</span> <span class="grey">Even more reasons to map with us.</span></h2>
+      <section class="sec" id="diff"><h2 class="sec-h"><span class="hl">The Bridgr difference.</span> <span class="grey">Built to be trusted.</span></h2>
         <div class="grid g4">
-          <div class="info"><div class="k">Evidence first</div><h3>No proof, no skill.</h3><p>P1 only lists skills backed by a project, course or internship — and quotes the evidence.</p>${stkS("search", { w: 110, r: 8 })}</div>
-          <div class="info"><div class="k">Explainable</div><h3>Scores you can check.</h3><p>Weighted must-have vs good-to-have formula, synonym-aware. No black-box numbers.</p>${stkS("chart", { w: 110, r: -8 })}</div>
-          <div class="info"><div class="k">Private</div><h3>Your data stays put.</h3><p>Profiles, applications and chats live in your browser. Download or wipe them anytime.</p>${stkS("heart", { w: 110, r: 10 })}</div>
-          <div class="info"><div class="k">Always on</div><h3>Works even offline.</h3><p>If the model is unreachable, a labelled offline engine keeps every module usable.</p>${stkS("bolt", { w: 110, r: -6 })}</div>
+          <div class="info"><div class="k">Evidence first</div><h3>No proof, no skill.</h3><p>P1 only lists skills backed by a project, course or internship, and quotes the evidence.</p>${stkS("search", { w: 104, r: 8 })}</div>
+          <div class="info"><div class="k">Explainable</div><h3>Scores you can check.</h3><p>A weighted must-have vs good-to-have formula with synonym matching. No black-box numbers.</p>${stkS("chart", { w: 104, r: -8 })}</div>
+          <div class="info"><div class="k">Private</div><h3>Your data stays put.</h3><p>Profiles, applications and chats live in your browser. Download or wipe them anytime.</p>${stkS("heart", { w: 104, r: 10 })}</div>
+          <div class="info"><div class="k">Always on</div><h3>Works even offline.</h3><p>If the model is unreachable, a clearly labelled offline engine keeps every module usable.</p>${stkS("bolt", { w: 104, r: -6 })}</div>
         </div></section>
-      <section class="sec">
-        <div class="banner rv">
-          <img src="${IMG("1529156069898-49953e39b3ac", 1800)}" alt="A group of friends sitting together facing the sea" loading="lazy" data-parallax />
-          ${stk("smile", "left:4%;top:8%", { w: 100, r: -10, depth: 0.8 })}
-          ${Paper("your batch.<br>your bridge.", { rot: 5, seed: "banner", kraft: true })}
-          <div class="b-in"><h2>Nobody gets left on the other side.</h2><p>Students see their gaps, faculty see their syllabus, recruiters see real skills. One bridge, three sides.</p>
-            <div class="actions"><a class="btn cyan" href="#/profile">Start with your profile</a><a class="btn ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)" href="#/curriculum">I'm faculty</a></div></div>
-        </div></section>
-      <section class="sec"><h2 class="sec-h"><span class="hl">How it works.</span> <span class="grey">Five prompts, one pipeline.</span></h2>
-        <div class="steps">
-          <div class="step"><h3>Extract</h3><p class="muted">P1 turns your resume into skills with proficiency 1–5 and evidence.</p></div>
-          <div class="step"><h3>Analyse</h3><p class="muted">P2 turns any job post into weighted requirements.</p></div>
-          <div class="step"><h3>Compare</h3><p class="muted">P3 scores the match and lists matched, partial and missing skills.</p></div>
-          <div class="step"><h3>Close</h3><p class="muted">P4 builds a roadmap; P8/P9 rehearse the interview.</p></div>
-          <div class="step"><h3>Apply</h3><p class="muted">P5 ranks internships; P7 polishes the resume.</p></div>
-        </div></section>
+      <section class="sec"><div class="cta">
+        <div class="cta-in"><h2>Start with your profile.<br><span>It takes about 20 seconds.</span></h2>
+          <p>Paste a resume or describe yourself. Bridgr maps your skills, scores them against real roles and shows what to learn next.</p>
+          <div class="actions"><a class="btn cyan big" href="#/profile">Map my skills</a><a class="btn ghost big on-dark" href="#/curriculum">I'm faculty</a></div></div>
+        <div class="cta-art" aria-hidden="true">
+          <span class="cu f1" style="--r:-6deg"><span class="cu-chip ok">✓ Evidence-backed skills</span></span>
+          <span class="cu f2" style="--r:5deg"><span class="cu-chip cy">Fit-ranked internships</span></span>
+          <span class="cu f3" style="--r:-3deg"><span class="cu-chip">Week-by-week roadmap</span></span>
+          <span class="cu f4" style="--r:7deg"><span class="cu-chip mid">Rubric-scored interviews</span></span>
+        </div></div></section>
     </div>`;
-    $$(".round[data-s]").forEach(b => (b.onclick = () => $("#" + b.dataset.s).scrollBy({ left: b.dataset.d * 420, behavior: "smooth" })));
+    heroDemo(0);
+    $$("[data-jump]").forEach(a => (a.onclick = e => { e.preventDefault(); $("#" + a.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" }); }));
   };
-  function tile(m) {
-    const st = m.s.map(([n, c, pos, r, w]) => n.startsWith("text:") ? stkS("", { text: n.slice(5), c, pos, r, w: w || 130 }) : stkS(n, { c, pos, r, w: w || (m.photo ? 96 : 110) })).join("");
-    const art = m.photo
-      ? `<div class="tile-art"><img src="${IMG(m.photo)}" alt="" loading="lazy" /><div class="shade"></div>${st}</div>`
-      : `<div class="tile-art">${st}</div>`;
-    return `<a class="tile ${m.tone}" href="#/${m.r}"><div class="tile-txt"><div class="tag">${esc(m.tag)}</div><h3>${esc(m.t)}</h3><p>${esc(m.d)}</p></div>${art}<span class="go">+</span></a>`;
+  function tile(m, ctx) {
+    const [n, c, pos, r] = m.acc;
+    return `<a class="tile" href="#/${m.r}"><div class="tile-txt"><div class="tag">${esc(m.tag)}</div><h3>${esc(m.t)}</h3><p>${esc(m.d)}</p></div>
+      <div class="tile-art">${CUTOUTS[m.r] ? CUTOUTS[m.r](ctx || cutCtx()) : ""}${stkS(n, { c, pos, r, w: 72 })}</div><span class="go" aria-hidden="true">+</span></a>`;
   }
 
   // ----- PROFILE (P1)
@@ -338,10 +430,13 @@
         $("#sort").value = "fit"; draw();
       }); };
   };
+  const DOMAIN_ICON = { Data: ["chart", "lime"], Web: ["laptop", "blue"], AI: ["bulb", "yellow"], Cloud: ["rocket", "purple"], Security: ["eyes", "yellow"], Design: ["pencil", "pink"], Product: ["target", "red"], Mobile: ["chat", "cyan"] };
   function jobCard(i, fit) {
-    const applied = store.get("apps", []).some(a => a.id === i.id);
-    return `<div class="card ${i.tone === "dark" ? "dark" : ""} job fade"><div class="co">${esc(i.company)} ${i.posted ? '<span class="badge">New</span>' : ""}</div><h3>${esc(i.title)}</h3><div class="small muted">📍 ${esc(i.location)} · ⏱ ${esc(i.duration)}</div><div class="small">₹${i.stipend.toLocaleString("en-IN")}/month · Apply by ${esc(i.deadline)}</div>${chips(i.skills)}
-      <div class="foot2">${fit ? `<span class="fit">${fit.fit_score}% fit</span>` : "<span></span>"}<button class="btn sm" data-apply="${i.id}" ${applied ? "disabled" : ""}>${applied ? "Applied ✓" : "Apply"}</button></div></div>`;
+    const applied = store.get("apps", []).some(a => a.id === i.id), [ic, col] = DOMAIN_ICON[i.domain] || ["brief", "orange"];
+    return `<div class="card job fade">
+      <div class="job-top"><div><div class="co">${esc(i.company)} ${i.posted ? '<span class="badge">New</span>' : ""}</div><h3>${esc(i.title)}</h3></div>${stkS(ic, { c: col, w: 52, r: 8 })}</div>
+      <div class="job-meta"><span>${esc(i.location)}</span><span>${esc(i.duration)}</span><span>Apply by ${esc(i.deadline)}</span></div>${chips(i.skills)}
+      <div class="foot2"><div><b>₹${i.stipend.toLocaleString("en-IN")}</b><span class="muted small"> / month</span>${fit ? `<div class="fit">${fit.fit_score}% fit for you</div>` : ""}</div><button class="btn sm" data-apply="${i.id}" ${applied ? "disabled" : ""}>${applied ? "Applied ✓" : "Apply"}</button></div></div>`;
   }
   function apply(id) {
     const apps = store.get("apps", []); if (apps.some(a => a.id === id)) return;
@@ -514,7 +609,7 @@
 
   // ---------- motion & fun ----------
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let io;
+  let io, playIO;
   function countUp(root) {
     const els = [...$$("[data-n]", root), ...(root.matches && root.matches("[data-n]") ? [root] : [])];
     els.forEach(el => {
@@ -534,14 +629,17 @@
       // hand transform back to hover/tilt effects once revealed
       if (el.matches(".tile, .job, .step")) setTimeout(() => el.classList.remove("rv", "in"), 900);
     }), { threshold: 0.1, rootMargin: "0px 0px -30px 0px" });
-    $$(".sec-h, .tile, .info, .step, .cat, .card, .banner", app).forEach(el => {
+    $$(".sec-h, .tile, .info, .step, .cat, .card, .banner, .stats>div, .show, .cta", app).forEach(el => {
       if (el.closest(".hero, .page-hero") || el.classList.contains("in")) return;
       el.classList.add("rv");
       el.style.setProperty("--d", Math.min([...el.parentElement.children].indexOf(el), 8) * 0.07 + "s");
       io.observe(el);
     });
     $$(".card.empty", app).forEach((el, i) => { if (!el.querySelector(".stk-static")) el.insertAdjacentHTML("afterbegin", stkS(["sparkle", "star", "bulb", "smile"][i % 4], { w: 90, r: i % 2 ? 8 : -8 })); });
-    tilt(); stickers(); onScroll();
+    // live demos inside the cut-outs only run while they are on screen
+    playIO && playIO.disconnect();
+    if (!reduce) { playIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle("play", e.isIntersecting)), { threshold: 0.2 }); $$(".tile, .show, .demo-wrap, .ph-stage", app).forEach(el => playIO.observe(el)); }
+    setupPins(); tilt(); stickers(); onScroll();
   }
   function tilt() {
     if (reduce || matchMedia("(hover: none)").matches) return;
@@ -572,6 +670,7 @@
   function onScroll() {
     const h = document.documentElement.scrollHeight - innerHeight;
     prog.style.transform = `scaleX(${h > 0 ? Math.min(1, scrollY / h) : 0})`;
+    updatePins();
     if (reduce) return;
     $$("[data-parallax]").forEach(img => { const r = img.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return; const k = (r.top + r.height / 2 - innerHeight / 2) / innerHeight; img.style.transform = `translateY(${(-k * 40 - 50).toFixed(1)}px)`; });
   }
@@ -594,6 +693,5 @@
   window.addEventListener("hashchange", () => { route(); if (location.hash !== lastHash) window.scrollTo({ top: 0, behavior: "instant" }); lastHash = location.hash; });
   $("#dlRuns").onclick = e => { e.preventDefault(); const b = new Blob([JSON.stringify(store.get("runs", []), null, 2)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "bridgr-runs.json"; a.click(); };
   $("#resetAll").onclick = e => { e.preventDefault(); try { Object.keys(localStorage).filter(k => k.startsWith("bridgr.")).forEach(k => localStorage.removeItem(k)); } catch {} toast("Demo data cleared"); route(); };
-  $("#toTop").onclick = e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); };
   route();
 })();

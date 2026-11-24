@@ -1,0 +1,43 @@
+[
+  {
+    "prompt": "P3",
+    "version": "v1",
+    "model": "Gemini 3 Flash Preview (Google AI Studio)",
+    "runs": 3,
+    "ok_calls": 3,
+    "json_valid": 0,
+    "scores": [],
+    "min": null,
+    "max": null
+  },
+  {
+    "prompt": "P3",
+    "version": "v2",
+    "model": "Gemini 3 Flash Preview (Google AI Studio)",
+    "runs": 3,
+    "ok_calls": 3,
+    "json_valid": 3,
+    "scores": [
+      50,
+      50,
+      50
+    ],
+    "min": 50,
+    "max": 50
+  },
+  {
+    "prompt": "P3",
+    "version": "v3",
+    "model": "Gemini 3 Flash Preview (Google AI Studio)",
+    "runs": 3,
+    "ok_calls": 3,
+    "json_valid": 3,
+    "scores": [
+      54,
+      54,
+      54
+    ],
+    "min": 54,
+    "max": 54
+  }
+]

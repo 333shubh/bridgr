@@ -1,0 +1,152 @@
+[
+  {
+    "no": 1,
+    "promptId": "P1",
+    "type": "Normal",
+    "input": "Sample 3rd-year CSE profile (Python, Pandas, SQL, recommender project)",
+    "expected": "8+ skills with levels; Pandas/Scikit-learn level 3 (project evidence)",
+    "status": 200,
+    "ms": 15024,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 2,
+    "promptId": "P1",
+    "type": "Edge",
+    "input": "Profile written in Hinglish",
+    "expected": "Skills extracted, summary in English",
+    "status": 200,
+    "ms": 12246,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 3,
+    "promptId": "P1",
+    "type": "Invalid",
+    "input": "\"asdf qwerty 123\"",
+    "expected": "{error: invalid_input}",
+    "status": 200,
+    "ms": 2658,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 4,
+    "promptId": "P2",
+    "type": "Normal",
+    "input": "Data Analyst Intern JD (SQL, Power BI, Pandas)",
+    "expected": "SQL weight 5 in must_have; Power BI in good_to_have",
+    "status": 200,
+    "ms": 14926,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 5,
+    "promptId": "P2",
+    "type": "Edge",
+    "input": "Only a title: \"Cloud intern\"",
+    "expected": "Typical cloud skills (AWS/Linux/Docker) inferred",
+    "status": 200,
+    "ms": 7161,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 6,
+    "promptId": "P3",
+    "type": "Normal",
+    "input": "Student (Python 3, SQL 2, Pandas 3, Excel 2) vs Data Analyst reqs",
+    "expected": "Score 45-70; SQL partial; Power BI missing",
+    "status": 200,
+    "ms": 17723,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 7,
+    "promptId": "P3",
+    "type": "Edge",
+    "input": "Synonyms: student has \"JS\", \"Postgres\"; role needs JavaScript, SQL",
+    "expected": "Synonyms counted as matched",
+    "status": 200,
+    "ms": 18591,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 8,
+    "promptId": "P4",
+    "type": "Normal",
+    "input": "Gaps SQL, Power BI; 4 weeks × 6 h",
+    "expected": "4 weeks, each ≤6h with a milestone",
+    "status": 200,
+    "ms": 36873,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 9,
+    "promptId": "P5",
+    "type": "Normal",
+    "input": "Data-skilled student vs 4 internships",
+    "expected": "Data Analyst / BI ranked above Android",
+    "status": 200,
+    "ms": 29901,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 10,
+    "promptId": "P6",
+    "type": "Normal",
+    "input": "DBMS syllabus vs Data Analyst Intern",
+    "expected": "Score 30-60; flags network/hierarchical models; suggests Python/BI",
+    "status": 200,
+    "ms": 10688,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 11,
+    "promptId": "P7",
+    "type": "Normal",
+    "input": "Sample resume vs Data Analyst JD",
+    "expected": "ATS 50-80; Power BI listed as missing keyword",
+    "status": 200,
+    "ms": 23563,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 12,
+    "promptId": "P8",
+    "type": "Normal",
+    "input": "Data Analyst, SQL+Statistics, Medium, 3",
+    "expected": "3 questions incl. SQL + stats, each with ideal points",
+    "status": 200,
+    "ms": 35255,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 13,
+    "promptId": "P9",
+    "type": "Invalid",
+    "input": "Answer: \"idk\"",
+    "expected": "Score 0-1, asks to try again",
+    "status": 200,
+    "ms": 28347,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 14,
+    "promptId": "P9",
+    "type": "Edge",
+    "input": "Correct answer typed in Hinglish",
+    "expected": "Score ≥6, feedback in English",
+    "status": 200,
+    "ms": 30726,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  },
+  {
+    "no": 15,
+    "promptId": "P10",
+    "type": "Edge",
+    "input": "Off-topic: \"write me a poem about pizza\"",
+    "expected": "Polite refusal + career redirect",
+    "status": 200,
+    "ms": 29464,
+    "model": "Gemini 3.5 Flash (Google AI Studio)"
+  }
+]

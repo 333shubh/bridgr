@@ -8,6 +8,12 @@ import { VERSIONS } from "./_versions.js";
 
 const GATEWAY_URL = "https://ai-gateway.vercel.sh/v1/chat/completions";
 const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+// gemini-2.5-flash is closed to new AI Studio keys. GEMINI_MODEL may list several models (comma-separated);
+// each is tried in order, so a 503 "high demand" or a used-up free-tier quota on one falls through to the next.
+const GEMINI_MODELS = (process.env.GEMINI_MODEL || "gemini-3.5-flash,gemini-3-flash-preview,gemini-3.5-flash-lite").split(",").map(s => s.trim()).filter(Boolean);
+const GEMINI_MODEL = GEMINI_MODELS[0];
+const GATEWAY_MODEL = process.env.AI_MODEL || "google/gemini-3.5-flash";
+const pretty = m => m.replace(/^.*\//, "").replace(/^gemini-/, "Gemini ").replace(/-flash/, " Flash").replace(/-pro/, " Pro").replace(/-lite/, " Lite").replace(/-preview/, " Preview");
 
 function parseJSON(text) {
   if (!text) throw new Error("empty model output");
@@ -33,7 +39,7 @@ async function callLLM({ url, token, model, messages, temperature, strictJSON = 
 export default async function handler(req, res) {
   if (req.method === "GET") {
     const hasGateway = !!(process.env.AI_GATEWAY_API_KEY || req.headers["x-vercel-oidc-token"] || process.env.VERCEL_OIDC_TOKEN);
-    return res.status(200).json({ ok: true, prompts: Object.keys(PROMPTS), gateway: hasGateway, gemini: !!process.env.GEMINI_API_KEY });
+    return res.status(200).json({ ok: true, prompts: Object.keys(PROMPTS), gateway: hasGateway, gemini: !!process.env.GEMINI_API_KEY, model: pretty(process.env.GEMINI_API_KEY ? GEMINI_MODEL : GATEWAY_MODEL) });
   }
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "POST only" });
 
@@ -59,9 +65,9 @@ export default async function handler(req, res) {
   const strictJSON = !ver || body.version !== "v1";
 
   const providers = [];
-  if (process.env.GEMINI_API_KEY) providers.push({ url: GEMINI_URL, token: process.env.GEMINI_API_KEY, model: "gemini-2.5-flash", label: "Gemini 2.5 Flash (Google AI Studio)" });
+  if (process.env.GEMINI_API_KEY) for (const m of GEMINI_MODELS) providers.push({ url: GEMINI_URL, token: process.env.GEMINI_API_KEY, model: m, label: `${pretty(m)} (Google AI Studio)` });
   const gwToken = process.env.AI_GATEWAY_API_KEY || req.headers["x-vercel-oidc-token"] || process.env.VERCEL_OIDC_TOKEN;
-  if (gwToken) providers.push({ url: GATEWAY_URL, token: gwToken, model: process.env.AI_MODEL || "google/gemini-2.5-flash", label: "Gemini 2.5 Flash (Vercel AI Gateway)" });
+  if (gwToken) providers.push({ url: GATEWAY_URL, token: gwToken, model: GATEWAY_MODEL, label: `${pretty(GATEWAY_MODEL)} (Vercel AI Gateway)` });
   if (!providers.length) return res.status(503).json({ ok: false, error: "no_llm_configured" });
 
   const t0 = Date.now();
@@ -76,7 +82,8 @@ export default async function handler(req, res) {
         return res.status(200).json({ ok: true, data, model: pr.label, version: body.version || "v3", ms: Date.now() - t0, attempt: attempt + 1 });
       } catch (e) {
         errors.push(`${pr.label}#${attempt + 1}: ${e.message}`);
-        if (/^(401|403|402)/.test(e.message)) break;
+        if (/^(401|403|402|404|429)/.test(e.message)) break;
+        if (/^(429|500|502|503)/.test(e.message)) await new Promise(r => setTimeout(r, 1500 * (attempt + 1)));
       }
     }
   }

@@ -1,0 +1,52 @@
+{
+  "no": 2,
+  "promptId": "P1",
+  "type": "Edge",
+  "input": "Profile written in Hinglish",
+  "expected": "Skills extracted, summary in English",
+  "status": 200,
+  "ms": 12246,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "name": null,
+    "degree": "ECE",
+    "year": "2nd",
+    "skills": [
+      {
+        "name": "Arduino",
+        "category": "Tools",
+        "level": 3,
+        "evidence": "Built smart dustbin project"
+      },
+      {
+        "name": "C",
+        "category": "Programming",
+        "level": 3,
+        "evidence": "Used in smart dustbin project"
+      },
+      {
+        "name": "Python",
+        "category": "Programming",
+        "level": 1,
+        "evidence": "Learned basic Python from YouTube"
+      },
+      {
+        "name": "MATLAB",
+        "category": "Tools",
+        "level": 2,
+        "evidence": "Used in lab coursework"
+      }
+    ],
+    "projects": [
+      {
+        "title": "Smart dustbin",
+        "tech": [
+          "Arduino",
+          "C"
+        ]
+      }
+    ],
+    "interests": [],
+    "summary": "2nd-year ECE student with project experience in Arduino and C, alongside basic lab experience in MATLAB and foundational Python learning."
+  }
+}

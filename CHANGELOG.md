@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-24: Real runs, model switch, Milestone 2 report
+- Google AI Studio no longer gives `gemini-2.5-flash` to new API keys, and the Vercel AI Gateway now needs a card on file, so live calls were failing and the app fell back to the offline engine. `api/ai.js` now calls Gemini 3.5 Flash by default and takes a comma-separated `GEMINI_MODEL` list, trying each model in order (Gemini 3 Flash Preview and Gemini 3.5 Flash Lite as fallbacks). It waits before retrying a 503 or 429.
+- Ran all 15 test cases against Gemini 3.5 Flash and saved the real outputs in `test-data/outputs/` (14 pass, 1 fail).
+- Ran the P3 iteration experiment (v1, v2, v3, three runs each on Gemini 3 Flash Preview) and saved it in `test-data/versions/`. Kept the earlier five v1 runs on Gemini 3.5 Flash in `test-data/versions/gemini-3.5-flash/`.
+- Each final prompt sheet in `prompts/final/` now ends with a real sample run (input and actual output) taken from the test outputs.
+- `compare-versions.mjs` takes an optional prompt list and records the model and the number of successful calls.
+- Added the Milestone 2 report (`docs/M2_PE-B65-43_Bridgr.pdf`), the synopsis (`docs/PromptBusters_Synopsis.pdf`) and real-run screenshots in `docs/screenshots/`.
+
 ## 2026-11-23: Landing page and polish
 - Original arc-and-dots logo and favicon restored.
 - Homepage hero shows a working Skill Gap window: it scores a saved profile against four roles from the role data (or a labelled sample student) and cycles through them.

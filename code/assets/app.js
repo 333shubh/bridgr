@@ -43,7 +43,7 @@
     return { data: result, model, live, ms: Math.round(performance.now() - t0) };
   }
   function setBadge(model, live) { $("#modelBadge").innerHTML = `<span class="badge ${live ? "live" : "off"}">${live ? "Live" : "Offline"}</span> ${esc(model)}`; }
-  fetch("/api/ai").then(r => r.json()).then(j => setBadge(j.gateway || j.gemini ? "Gemini 2.5 Flash" : "Offline heuristic engine", j.gateway || j.gemini)).catch(() => setBadge("Offline heuristic engine", false));
+  fetch("/api/ai").then(r => r.json()).then(j => setBadge(j.gateway || j.gemini ? (j.model || "Gemini") : "Offline heuristic engine", j.gateway || j.gemini)).catch(() => setBadge("Offline heuristic engine", false));
   const metaLine = r => `<div class="meta"><span class="badge ${r.live ? "live" : "off"}">${r.live ? "Live AI" : "Offline"}</span><span>${esc(r.model)}</span><span>${(r.ms / 1000).toFixed(1)}s</span></div>`;
   const invalid = d => d && d.error === "invalid_input" ? `<div class="card fade"><h3>⚠️ Couldn't use that input</h3><p class="muted">${esc(d.message || "Please paste real profile / job text.")}</p></div>` : "";
 

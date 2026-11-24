@@ -1,0 +1,26 @@
+{
+  "no": 14,
+  "promptId": "P9",
+  "type": "Edge",
+  "input": "Correct answer typed in Hinglish",
+  "expected": "Score ≥6, feedback in English",
+  "status": 200,
+  "ms": 30726,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "score": 10,
+    "rubric": {
+      "accuracy": 4,
+      "depth": 3,
+      "clarity": 3
+    },
+    "covered_points": [
+      "WHERE filters rows before grouping",
+      "HAVING filters groups after GROUP BY",
+      "HAVING can use aggregates"
+    ],
+    "missed_points": [],
+    "feedback": "Excellent answer! You accurately explained that WHERE filters individual rows before grouping, whereas HAVING filters aggregated groups after GROUP BY and supports aggregate functions like COUNT and SUM.",
+    "improved_answer": "The main difference between WHERE and HAVING in SQL lies in when and what they filter. The WHERE clause filters individual rows before any grouping occurs and cannot accept aggregate functions. The HAVING clause filters summarized groups after the GROUP BY clause is applied and allows aggregate functions such as SUM(), COUNT(), or AVG()."
+  }
+}

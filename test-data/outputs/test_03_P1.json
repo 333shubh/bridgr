@@ -1,0 +1,14 @@
+{
+  "no": 3,
+  "promptId": "P1",
+  "type": "Invalid",
+  "input": "\"asdf qwerty 123\"",
+  "expected": "{error: invalid_input}",
+  "status": 200,
+  "ms": 2658,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "error": "invalid_input",
+    "message": "The provided profile text is meaningless and contains no career or education information."
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "no": 11,
+  "promptId": "P7",
+  "type": "Normal",
+  "input": "Sample resume vs Data Analyst JD",
+  "expected": "ATS 50-80; Power BI listed as missing keyword",
+  "status": 200,
+  "ms": 23563,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "ats_score": 55,
+    "breakdown": {
+      "keyword": 45,
+      "impact": 60,
+      "structure": 60,
+      "relevance": 65
+    },
+    "keywords_found": [
+      "Python",
+      "SQL",
+      "Excel"
+    ],
+    "keywords_missing": [
+      "statistics",
+      "Power BI",
+      "Tableau",
+      "A/B testing"
+    ],
+    "section_feedback": [
+      {
+        "section": "Skills",
+        "feedback": "Includes core technical tools like Python, SQL, and Excel, but missing key requirements like statistics, Power BI/Tableau, and A/B testing."
+      },
+      {
+        "section": "Projects",
+        "feedback": "Movie recommender project includes a metric (precision@10 of 0.82), but needs clearer context on tools used (e.g., Pandas/SQL) and business application."
+      },
+      {
+        "section": "Education",
+        "feedback": "Degree and CGPA are clearly stated, but could benefit from listing relevant coursework such as Statistics or Database Management."
+      }
+    ],
+    "rewrite_suggestions": [
+      {
+        "before": "Movie recommender (0.82 precision@10).",
+        "after": "Developed a movie recommendation system using Python and Pandas, achieving a 0.82 precision@10 metric."
+      },
+      {
+        "before": "College event website (HTML/CSS/JS).",
+        "after": "Designed and developed a responsive college event website using HTML, CSS, and JavaScript."
+      }
+    ]
+  }
+}

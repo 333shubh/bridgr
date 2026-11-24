@@ -1,0 +1,64 @@
+{
+  "no": 9,
+  "promptId": "P5",
+  "type": "Normal",
+  "input": "Data-skilled student vs 4 internships",
+  "expected": "Data Analyst / BI ranked above Android",
+  "status": 200,
+  "ms": 29901,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "ranked": [
+      {
+        "id": "IN01",
+        "fit_score": 95,
+        "reasons": [
+          "Matches 3 out of 4 required skills: SQL, Excel, and Python.",
+          "Directly aligns with the student's interest in analytics."
+        ],
+        "missing_skills": [
+          "Power BI"
+        ],
+        "apply_tip": "Highlight experience using Python and Pandas for data manipulation and analytics projects."
+      },
+      {
+        "id": "IN10",
+        "fit_score": 75,
+        "reasons": [
+          "Strong skill match with SQL and Excel.",
+          "Fits the student's interest in business analytics."
+        ],
+        "missing_skills": [
+          "Tableau"
+        ],
+        "apply_tip": "Emphasize SQL data extraction skills and express eagerness to learn Tableau dashboarding."
+      },
+      {
+        "id": "IN05",
+        "fit_score": 15,
+        "reasons": [
+          "No overlap with current Python/SQL data stack.",
+          "Role focuses on infrastructure rather than analytics."
+        ],
+        "missing_skills": [
+          "AWS",
+          "Linux",
+          "Docker"
+        ],
+        "apply_tip": "Build foundational knowledge in Linux and cloud platforms before applying for DevOps roles."
+      },
+      {
+        "id": "IN12",
+        "fit_score": 10,
+        "reasons": [
+          "Requires mobile development skills outside the student's data analytics profile."
+        ],
+        "missing_skills": [
+          "Kotlin",
+          "Android"
+        ],
+        "apply_tip": "Focus on software engineering fundamentals and Java/Kotlin if pivoting to mobile development."
+      }
+    ]
+  }
+}

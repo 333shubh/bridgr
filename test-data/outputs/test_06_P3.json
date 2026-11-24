@@ -1,0 +1,53 @@
+{
+  "no": 6,
+  "promptId": "P3",
+  "type": "Normal",
+  "input": "Student (Python 3, SQL 2, Pandas 3, Excel 2) vs Data Analyst reqs",
+  "expected": "Score 45-70; SQL partial; Power BI missing",
+  "status": 200,
+  "ms": 17723,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "match_score": 68,
+    "readiness": "Developing",
+    "matched": [
+      {
+        "skill": "Python",
+        "student_level": 3,
+        "required_level": 3
+      }
+    ],
+    "partial": [
+      {
+        "skill": "SQL",
+        "student_level": 2,
+        "required_level": 3,
+        "gap": 1
+      },
+      {
+        "skill": "Excel",
+        "student_level": 2,
+        "required_level": 3,
+        "gap": 1
+      },
+      {
+        "skill": "Statistics",
+        "student_level": 2,
+        "required_level": 3,
+        "gap": 1
+      }
+    ],
+    "missing": [
+      {
+        "skill": "Power BI",
+        "required_level": 2,
+        "priority": "Low",
+        "why_it_matters": "Useful tool for building dashboards and reporting data to stakeholders"
+      }
+    ],
+    "strengths": [
+      "Python programming and data manipulation using Pandas"
+    ],
+    "verdict": "Good Python base, but needs to advance core skills in SQL, Excel, and Statistics to reach candidate readiness."
+  }
+}

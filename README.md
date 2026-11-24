@@ -26,14 +26,14 @@ Other features: dark mode, a downloadable run log (JSON) of every AI call, an of
 ## How to open / run
 
 - **Use it:** open the live link above. No login is needed, and data stays in your browser.
-- **Run locally:** install the Vercel CLI, then run `cd code && vercel dev`. Set `GEMINI_API_KEY` (free from Google AI Studio) as an environment variable; never commit it.
+- **Run locally:** install the Vercel CLI, then run `cd code && vercel dev`. Set `GEMINI_API_KEY` (free from Google AI Studio) as an environment variable; never commit it. Optional: `GEMINI_MODEL` takes a comma-separated list of models to try in order. Google no longer gives `gemini-2.5-flash` to new keys, so the default is `gemini-3.5-flash`.
 - **Re-run the test table:** `cd code && node scripts/run-tests.mjs https://bridgr-rose.vercel.app` (outputs go to `test-data/outputs/`).
 - **Re-run the prompt-version experiment:** `node code/scripts/compare-versions.mjs https://bridgr-rose.vercel.app 5`
 - **Regenerate prompt sheets:** `node code/scripts/export-prompts.mjs`
 
 ## Architecture
 
-Browser SPA (vanilla JS, Chart.js) → `POST /api/ai {promptId, vars}` → Vercel Function → Gemini 2.5 Flash (JSON mode, temperature per prompt, 2 retries) → validated JSON → UI.
+Browser SPA (vanilla JS, Chart.js) → `POST /api/ai {promptId, vars}` → Vercel Function → Gemini 3.5 Flash via Google AI Studio (JSON mode, temperature per prompt, 2 attempts per model; falls back to Gemini 3 Flash Preview, then Gemini 3.5 Flash Lite) → validated JSON → UI.
 If no model is reachable, the UI switches to a labelled **offline heuristic engine** (`code/assets/engine.js`) that returns the same JSON shapes.
 No API keys are stored in this repository.
 
@@ -54,9 +54,10 @@ docs/              diagrams and Milestone 2 report
 
 | Enrollment no. | Name | Main task |
 |---|---|---|
-| S24CSEUxxxx | _Member 1_ | _e.g. prompt design (P1–P3), iteration log_ |
-| S24CSEUxxxx | _Member 2_ | _e.g. frontend modules and UI_ |
-| S24CSEUxxxx | _Member 3_ | _e.g. testing and test table_ |
-| S24CSEUxxxx | _Member 4_ | _e.g. docs, diagrams and reel_ |
+| S24CSEU0136 | Rhythm Jain | Prompt design: P1, P2, P4, P5 |
+| S24CSEU0361 | Ayush Swamy | P3 and P9, prompt versions v1–v3, iteration log |
+| S24CSEU0530 | Shubh Jadiya | Web app, serverless API, deployment |
+| S24CSEU0318 | Reyansh Singhal | Test cases, test runs, test table |
+| S24CSEU2045 | Ishaan Yadav | P6, P7, P8, P10; diagrams, synopsis, reel |
 
 _Internship listings in the portal are sample data for demonstration._

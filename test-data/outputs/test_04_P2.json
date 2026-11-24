@@ -1,0 +1,82 @@
+{
+  "no": 4,
+  "promptId": "P2",
+  "type": "Normal",
+  "input": "Data Analyst Intern JD (SQL, Power BI, Pandas)",
+  "expected": "SQL weight 5 in must_have; Power BI in good_to_have",
+  "status": 200,
+  "ms": 14926,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "role": "Data Analyst Intern",
+    "company": null,
+    "experience_level": "Intern",
+    "must_have": [
+      {
+        "skill": "SQL",
+        "weight": 5,
+        "required_level": 4
+      },
+      {
+        "skill": "Python",
+        "weight": 4,
+        "required_level": 3
+      },
+      {
+        "skill": "Pandas",
+        "weight": 4,
+        "required_level": 3
+      },
+      {
+        "skill": "Microsoft Excel",
+        "weight": 4,
+        "required_level": 3
+      },
+      {
+        "skill": "Hypothesis Testing",
+        "weight": 4,
+        "required_level": 3
+      },
+      {
+        "skill": "A/B Testing Analysis",
+        "weight": 3,
+        "required_level": 2
+      }
+    ],
+    "good_to_have": [
+      {
+        "skill": "Power BI",
+        "weight": 3,
+        "required_level": 3
+      },
+      {
+        "skill": "Tableau",
+        "weight": 2,
+        "required_level": 2
+      },
+      {
+        "skill": "dbt",
+        "weight": 2,
+        "required_level": 2
+      },
+      {
+        "skill": "PostgreSQL",
+        "weight": 3,
+        "required_level": 3
+      }
+    ],
+    "soft_skills": [
+      "Communication Skills",
+      "Presentation Skills",
+      "Analytical Thinking",
+      "Stakeholder Interaction"
+    ],
+    "typical_tasks": [
+      "Write SQL queries on PostgreSQL warehouse to extract and analyze data",
+      "Clean and manipulate datasets using Python and Pandas",
+      "Build and maintain dashboards in Power BI",
+      "Analyze A/B test results and evaluate key performance metrics",
+      "Present data insights and actionable recommendations to product managers"
+    ]
+  }
+}

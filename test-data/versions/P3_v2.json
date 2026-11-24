@@ -1,0 +1,57 @@
+{
+  "prompt": "P3",
+  "version": "v2",
+  "model": "Gemini 3 Flash Preview (Google AI Studio)",
+  "runs": 3,
+  "ok_calls": 3,
+  "json_valid": 3,
+  "scores": [
+    50,
+    50,
+    50
+  ],
+  "min": 50,
+  "max": 50,
+  "samples": [
+    {
+      "match_score": 50,
+      "matched": [
+        "Python",
+        "SQL",
+        "Excel"
+      ],
+      "missing": [
+        "Statistics",
+        "Power BI"
+      ],
+      "verdict": "The candidate is a partial match. While they meet the Python requirement, their SQL and Excel levels are below the required threshold, and they are missing the critical Statistics requirement."
+    },
+    {
+      "match_score": 50,
+      "matched": [
+        "Python",
+        "SQL",
+        "Excel",
+        "Pandas"
+      ],
+      "missing": [
+        "Statistics",
+        "Power BI"
+      ],
+      "verdict": "The candidate meets the Python requirement but fails to reach the required proficiency levels for SQL and Excel, and lacks the mandatory Statistics knowledge."
+    },
+    {
+      "match_score": 50,
+      "matched": [
+        "Python",
+        "SQL",
+        "Excel"
+      ],
+      "missing": [
+        "Statistics",
+        "Power BI"
+      ],
+      "verdict": "The candidate meets the required proficiency for Python but falls short on the required levels for SQL and Excel. Additionally, the candidate is missing the mandatory Statistics skill and the preferred Power BI skill."
+    }
+  ]
+}

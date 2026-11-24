@@ -4,8 +4,8 @@
 |---|---|
 | Step in workflow | Step 3 — Compare student vs industry (core) |
 | Purpose | Compare the structured student profile with role requirements and produce a scored, explainable gap map. |
-| Tool and model | Gemini 2.5 Flash via Vercel AI Gateway (OpenAI-compatible chat completions) |
-| Settings | temperature 0.1, response_format json_object, up to 2 retries on invalid JSON |
+| Tool and model | Gemini 3.5 Flash via Google AI Studio (OpenAI-compatible endpoint); falls back to Gemini 3 Flash Preview, then Gemini 3.5 Flash Lite |
+| Settings | temperature 0.1, response_format json_object, 2 attempts per model |
 | Examples included | 1 |
 | Output format | JSON object (schema in user prompt) |
 
@@ -30,4 +30,61 @@ Return JSON:
 {"match_score":0-100,"readiness":"Not ready|Developing|Almost ready|Ready","matched":[{"skill":string,"student_level":number,"required_level":number}],"partial":[{"skill":string,"student_level":number,"required_level":number,"gap":number}],"missing":[{"skill":string,"required_level":number,"priority":"High|Medium|Low","why_it_matters":string}],"strengths":[string],"verdict":string}
 
 EXAMPLE: student [{"name":"Python","level":3}] vs must_have [{"skill":"Python","weight":5,"required_level":3},{"skill":"SQL","weight":4,"required_level":3}] -> {"match_score":56,"readiness":"Developing","matched":[{"skill":"Python","student_level":3,"required_level":3}],"partial":[],"missing":[{"skill":"SQL","required_level":3,"priority":"High","why_it_matters":"Every analyst query starts in SQL"}],"strengths":["Python fundamentals"],"verdict":"Good Python base; SQL is the single biggest gap."}
+```
+
+## Sample run (test #6, Gemini 3.5 Flash (Google AI Studio), 17.7 s)
+
+Input:
+```json
+{
+  "student_skills": "[{\"name\":\"Python\",\"level\":3},{\"name\":\"SQL\",\"level\":2},{\"name\":\"Pandas\",\"level\":3},{\"name\":\"Excel\",\"level\":2},{\"name\":\"Statistics\",\"level\":2}]",
+  "role_requirements": "{\"must_have\":[{\"skill\":\"SQL\",\"weight\":5,\"required_level\":3},{\"skill\":\"Excel\",\"weight\":4,\"required_level\":3},{\"skill\":\"Python\",\"weight\":4,\"required_level\":3},{\"skill\":\"Statistics\",\"weight\":4,\"required_level\":3}],\"good_to_have\":[{\"skill\":\"Power BI\",\"weight\":3,\"required_level\":2}]}"
+}
+```
+
+Actual output:
+```json
+{
+  "match_score": 68,
+  "readiness": "Developing",
+  "matched": [
+    {
+      "skill": "Python",
+      "student_level": 3,
+      "required_level": 3
+    }
+  ],
+  "partial": [
+    {
+      "skill": "SQL",
+      "student_level": 2,
+      "required_level": 3,
+      "gap": 1
+    },
+    {
+      "skill": "Excel",
+      "student_level": 2,
+      "required_level": 3,
+      "gap": 1
+    },
+    {
+      "skill": "Statistics",
+      "student_level": 2,
+      "required_level": 3,
+      "gap": 1
+    }
+  ],
+  "missing": [
+    {
+      "skill": "Power BI",
+      "required_level": 2,
+      "priority": "Low",
+      "why_it_matters": "Useful tool for building dashboards and reporting data to stakeholders"
+    }
+  ],
+  "strengths": [
+    "Python programming and data manipulation using Pandas"
+  ],
+  "verdict": "Good Python base, but needs to advance core skills in SQL, Excel, and Statistics to reach candidate readiness."
+}
 ```

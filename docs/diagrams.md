@@ -49,7 +49,7 @@ mindmap
 sequenceDiagram
   participant S as Student (browser)
   participant API as /api/ai (Vercel Function)
-  participant LLM as Gemini 2.5 Flash
+  participant LLM as Gemini 3.5 Flash
   S->>API: {promptId:"P1", vars:{profile_text}}
   API->>LLM: system + filled user template (temp 0.2, JSON mode)
   LLM-->>API: JSON skills
@@ -73,7 +73,7 @@ flowchart TB
     ST[Static hosting]
     FN[api/ai.js<br/>prompt library P1-P10<br/>versions v1/v2<br/>JSON parse + retry]
   end
-  G1[Google AI Studio<br/>Gemini 2.5 Flash]
+  G1[Google AI Studio<br/>Gemini 3.5 Flash<br/>fallback: 3 Flash Preview, 3.5 Flash Lite]
   G2[Vercel AI Gateway]
   UI <--> LS
   UI -->|fetch| FN

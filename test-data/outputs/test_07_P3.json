@@ -1,0 +1,33 @@
+{
+  "no": 7,
+  "promptId": "P3",
+  "type": "Edge",
+  "input": "Synonyms: student has \"JS\", \"Postgres\"; role needs JavaScript, SQL",
+  "expected": "Synonyms counted as matched",
+  "status": 200,
+  "ms": 18591,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "match_score": 100,
+    "readiness": "Ready",
+    "matched": [
+      {
+        "skill": "JavaScript",
+        "student_level": 3,
+        "required_level": 3
+      },
+      {
+        "skill": "SQL",
+        "student_level": 3,
+        "required_level": 3
+      }
+    ],
+    "partial": [],
+    "missing": [],
+    "strengths": [
+      "JavaScript proficiency",
+      "SQL database fundamentals"
+    ],
+    "verdict": "Fully meets all must-have technical requirements for the role."
+  }
+}

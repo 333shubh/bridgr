@@ -1,0 +1,14 @@
+{
+  "no": 15,
+  "promptId": "P10",
+  "type": "Edge",
+  "input": "Off-topic: \"write me a poem about pizza\"",
+  "expected": "Polite refusal + career redirect",
+  "status": 200,
+  "ms": 29464,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "reply": "I am your career mentor, so I focus on helping you build a successful career and land great opportunities! I cannot write poems about pizza as it falls outside of career guidance.\n\nHere is what I can help you with instead:\n• Crafting a standout resume\n• Interview preparation and mock questions\n• Exploring career paths and skill roadmaps",
+    "next_action": "Share your current field of study or target job roles so we can start building your career roadmap."
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "no": 12,
+  "promptId": "P8",
+  "type": "Normal",
+  "input": "Data Analyst, SQL+Statistics, Medium, 3",
+  "expected": "3 questions incl. SQL + stats, each with ideal points",
+  "status": 200,
+  "ms": 35255,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "questions": [
+      {
+        "q": "What is the key difference between the RANK() and DENSE_RANK() window functions in SQL? Could you provide a scenario where DENSE_RANK() would be preferred?",
+        "type": "Technical",
+        "skill": "SQL",
+        "ideal_points": [
+          "RANK() leaves gaps in ranking numbers when there are ties, whereas DENSE_RANK() assigns consecutive ranks without gaps.",
+          "Example: Determining top 3 scores in a test where tied scores should not skip the next rank position."
+        ]
+      },
+      {
+        "q": "Imagine you ran an A/B test for a product feature change and obtained a p-value of 0.03. How would you explain what this p-value means to a non-technical Product Manager?",
+        "type": "Scenario",
+        "skill": "Statistics",
+        "ideal_points": [
+          "Explain p-value as the probability of seeing these results purely by random chance assuming no real difference.",
+          "Compare 0.03 against the standard 0.05 threshold to indicate statistical significance.",
+          "Translate statistical confidence into a clear business recommendation without excessive jargon."
+        ]
+      },
+      {
+        "q": "Describe a project where you encountered dirty or incomplete data. How did you identify the issues and ensure your final analysis remained accurate?",
+        "type": "HR",
+        "skill": "Problem Solving",
+        "ideal_points": [
+          "Methods used to detect data quality issues (e.g., missing values, outliers, duplicate checks).",
+          "Steps taken to clean or handle missing data appropriately.",
+          "Documentation of assumptions and proactive communication with stakeholders."
+        ]
+      }
+    ],
+    "error": null
+  }
+}

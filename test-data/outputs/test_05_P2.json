@@ -1,0 +1,82 @@
+{
+  "no": 5,
+  "promptId": "P2",
+  "type": "Edge",
+  "input": "Only a title: \"Cloud intern\"",
+  "expected": "Typical cloud skills (AWS/Linux/Docker) inferred",
+  "status": 200,
+  "ms": 7161,
+  "model": "Gemini 3.5 Flash (Google AI Studio)",
+  "output": {
+    "role": "Cloud Intern",
+    "company": null,
+    "experience_level": "Intern",
+    "must_have": [
+      {
+        "skill": "Cloud Fundamentals (AWS/Azure/GCP)",
+        "weight": 5,
+        "required_level": 3
+      },
+      {
+        "skill": "Linux Systems & CLI",
+        "weight": 4,
+        "required_level": 3
+      },
+      {
+        "skill": "Networking Fundamentals (DNS, TCP/IP, VPC)",
+        "weight": 4,
+        "required_level": 3
+      },
+      {
+        "skill": "Scripting (Python or Bash)",
+        "weight": 4,
+        "required_level": 3
+      },
+      {
+        "skill": "Git & Version Control",
+        "weight": 3,
+        "required_level": 3
+      },
+      {
+        "skill": "Docker & Containerization",
+        "weight": 4,
+        "required_level": 2
+      }
+    ],
+    "good_to_have": [
+      {
+        "skill": "Infrastructure as Code (Terraform)",
+        "weight": 3,
+        "required_level": 2
+      },
+      {
+        "skill": "CI/CD Pipelines (GitHub Actions/Jenkins)",
+        "weight": 3,
+        "required_level": 2
+      },
+      {
+        "skill": "Kubernetes Basics",
+        "weight": 2,
+        "required_level": 1
+      },
+      {
+        "skill": "Cloud Security & IAM",
+        "weight": 3,
+        "required_level": 2
+      }
+    ],
+    "soft_skills": [
+      "Analytical Problem Solving",
+      "Clear Technical Communication",
+      "Eagerness to Learn",
+      "Team Collaboration"
+    ],
+    "typical_tasks": [
+      "Assist in configuring and deploying resources on cloud platforms like AWS, Azure, or GCP.",
+      "Write Bash or Python scripts to automate cloud management and resource cleanup.",
+      "Help containerize applications using Docker and integrate them into basic CI/CD workflows.",
+      "Monitor system metrics and troubleshoot basic network or configuration issues.",
+      "Maintain internal documentation for deployment steps and infrastructure setups."
+    ]
+  }
+}

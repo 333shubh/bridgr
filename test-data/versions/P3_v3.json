@@ -1,0 +1,149 @@
+{
+  "prompt": "P3",
+  "version": "v3",
+  "model": "Gemini 3 Flash Preview (Google AI Studio)",
+  "runs": 3,
+  "ok_calls": 3,
+  "json_valid": 3,
+  "scores": [
+    54,
+    54,
+    54
+  ],
+  "min": 54,
+  "max": 54,
+  "samples": [
+    {
+      "match_score": 54,
+      "readiness": "Developing",
+      "matched": [
+        {
+          "skill": "Python",
+          "student_level": 3,
+          "required_level": 3
+        }
+      ],
+      "partial": [
+        {
+          "skill": "SQL",
+          "student_level": 2,
+          "required_level": 3,
+          "gap": 1
+        },
+        {
+          "skill": "Excel",
+          "student_level": 2,
+          "required_level": 3,
+          "gap": 1
+        }
+      ],
+      "missing": [
+        {
+          "skill": "Statistics",
+          "required_level": 3,
+          "priority": "High",
+          "why_it_matters": "Fundamental for interpreting data trends and ensuring analytical validity."
+        },
+        {
+          "skill": "Power BI",
+          "required_level": 2,
+          "priority": "Low",
+          "why_it_matters": "Important for creating stakeholder-facing dashboards and reports."
+        }
+      ],
+      "strengths": [
+        "Python proficiency",
+        "Data manipulation with Pandas"
+      ],
+      "verdict": "The student has a solid foundation in Python and Pandas, but lacks critical Statistics knowledge and needs to improve SQL and Excel skills to meet the role's requirements."
+    },
+    {
+      "match_score": 54,
+      "readiness": "Developing",
+      "matched": [
+        {
+          "skill": "Python",
+          "student_level": 3,
+          "required_level": 3
+        }
+      ],
+      "partial": [
+        {
+          "skill": "SQL",
+          "student_level": 2,
+          "required_level": 3,
+          "gap": 1
+        },
+        {
+          "skill": "Excel",
+          "student_level": 2,
+          "required_level": 3,
+          "gap": 1
+        }
+      ],
+      "missing": [
+        {
+          "skill": "Statistics",
+          "required_level": 3,
+          "priority": "High",
+          "why_it_matters": "Fundamental for interpreting data and ensuring analytical validity."
+        },
+        {
+          "skill": "Power BI",
+          "required_level": 2,
+          "priority": "Low",
+          "why_it_matters": "Important for creating business-facing dashboards and reports."
+        }
+      ],
+      "strengths": [
+        "Python proficiency",
+        "Data manipulation with Pandas"
+      ],
+      "verdict": "The student has a strong foundation in Python and Pandas, but lacks critical statistical knowledge and falls slightly short of the required proficiency in SQL and Excel."
+    },
+    {
+      "match_score": 54,
+      "readiness": "Developing",
+      "matched": [
+        {
+          "skill": "Python",
+          "student_level": 3,
+          "required_level": 3
+        }
+      ],
+      "partial": [
+        {
+          "skill": "SQL",
+          "student_level": 2,
+          "required_level": 3,
+          "gap": 1
+        },
+        {
+          "skill": "Excel",
+          "student_level": 2,
+          "required_level": 3,
+          "gap": 1
+        }
+      ],
+      "missing": [
+        {
+          "skill": "Statistics",
+          "required_level": 3,
+          "priority": "High",
+          "why_it_matters": "Fundamental for interpreting data trends and ensuring analytical validity."
+        },
+        {
+          "skill": "Power BI",
+          "required_level": 2,
+          "priority": "Low",
+          "why_it_matters": "Used for creating visual reports and dashboards for stakeholders."
+        }
+      ],
+      "strengths": [
+        "Python proficiency",
+        "Data manipulation with Pandas"
+      ],
+      "verdict": "The student has a solid foundation in Python, but lacks the required depth in SQL and Excel, and is missing critical Statistics knowledge necessary for this role."
+    }
+  ]
+}
